@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React, { PropsWithChildren, ReactElement } from "react";
 import {
     render as baseRender,
     RenderOptions,
@@ -17,7 +17,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
  * please visit https://testing-library.com/docs/react-testing-library/setup
  */
 
-export const AllTheProviders = ({ children }) => {
+export const AllTheProviders = ({ children }: PropsWithChildren) => {
     const queryClient = new QueryClient();
 
     return (

@@ -15,17 +15,18 @@ interface CardsProps extends BoxProps {
     title: string;
 }
 
-export const Cards = ({ title, children }: CardsProps): JSX.Element => {
+export const Cards = ({ title, children, ...res }: CardsProps): JSX.Element => {
     return (
         <Box
-            data-testid="container"
-            shadow="xl"
-            h={"28rem"}
-            borderRadius="lg"
-            overflow="clip"
-            borderWidth="1px"
-            borderStyle="solid"
-            borderColor="gray.200"
+            {...res}
+            data-testid="card-container"
+            shadow={res?.shadow || "xl"}
+            h={res.h || res?.height || "28rem"}
+            borderRadius={res.borderRadius || "lg"}
+            overflow={res?.overflow || "clip"}
+            borderWidth={res?.borderWidth || "1px"}
+            borderStyle={res?.borderStyle || "solid"}
+            borderColor={res?.borderColor || "gray.200"}
         >
             <HStack
                 justifyContent="space-between"

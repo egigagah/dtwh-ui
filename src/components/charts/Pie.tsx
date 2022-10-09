@@ -141,7 +141,7 @@ const App = ({ data, ...res }: PieProps): JSX.Element => {
                             direction: "row",
                             justify: false,
                             translateX: 0,
-                            translateY: 40,
+                            translateY: (dimension.height * 10) / 100,
                             itemsSpacing: 10,
                             itemWidth:
                                 (dimension.width * 80) / 100 / data.length,

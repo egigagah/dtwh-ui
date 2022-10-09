@@ -3,9 +3,9 @@ import { Flex, SimpleGrid } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
 import Pie from "@components/charts/Pie";
-import { dataPie, dataBar } from "src/utils/datas/charts";
 import { Cards } from "@components/cards";
-import Bar from "@components/charts/Bar";
+import Charts from "@components/charts";
+import { dataBar, dataPie } from "src/utils/datas/charts";
 
 const Home: React.FC = () => {
     return (
@@ -17,10 +17,10 @@ const Home: React.FC = () => {
                 py={[8, 16]}
             >
                 <Cards title="Data xxx">
-                    <Pie data={dataPie} />
+                    <Charts.Pie data={dataPie} />
                 </Cards>
                 <Cards title="Data xxx">
-                    <Bar data={dataBar} />
+                    <Charts.Bar data={dataBar} />
                 </Cards>
                 <Cards title="Data xxx">
                     <Pie data={dataPie} />

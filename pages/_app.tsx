@@ -8,8 +8,8 @@ import { Hydrate } from "react-query/hydration";
 import { appWithTranslation } from "next-i18next";
 import NextNProgress from "nextjs-progressbar";
 import { ReactQueryDevtools } from "react-query/devtools";
-import Layouts from "@components/layouts";
 import { CustomAppElement, CustomAppProps } from "src/utils/types";
+import { Layout } from "@components/index";
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const queryClient = new QueryClient();
@@ -34,9 +34,9 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                 <QueryClientProvider client={queryClient}>
                     <ReactQueryDevtools initialIsOpen={false} />
                     <Hydrate state={pageProps.dehydratedState}>
-                        <Layouts {...componentState?.Layout}>
+                        <Layout {...componentState?.Layout}>
                             <Component {...pageProps} />
-                        </Layouts>
+                        </Layout>
                     </Hydrate>
                 </QueryClientProvider>
             </ChakraProvider>
