@@ -5,21 +5,36 @@ import {
     MenuItem,
     MenuList,
 } from "@chakra-ui/react";
+import { ReactI18NextChild } from "react-i18next";
 import { RiMenuLine } from "react-icons/ri";
 
-export default function Menus(): JSX.Element {
+function Menus({ children }: { children: ReactI18NextChild }): JSX.Element {
     return (
-        <Menu>
+        <Menu isLazy>
             <MenuButton
                 as={IconButton}
                 aria-label="Options"
                 icon={<RiMenuLine />}
                 variant="ghost"
             />
-            <MenuList>
-                <MenuItem command="⌘D">Download CSV</MenuItem>
-                <MenuItem command="⌘⇧E">Get Embed Code</MenuItem>
-            </MenuList>
+            <MenuList>{children}</MenuList>
         </Menu>
+    );
+}
+
+export default function ChartMenus({
+    setModalEmbedShow,
+}: {
+    setModalEmbedShow?: () => void;
+}): JSX.Element {
+    return (
+        <Menus>
+            <MenuItem command="⌘D">Download CSV</MenuItem>
+            {setModalEmbedShow && (
+                <MenuItem command="⌘⇧E" onClick={setModalEmbedShow}>
+                    Get Embed Code
+                </MenuItem>
+            )}
+        </Menus>
     );
 }
