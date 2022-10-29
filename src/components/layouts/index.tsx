@@ -1,5 +1,7 @@
 import { Flex, Stack } from "@chakra-ui/react";
+import Link from "next/link";
 import { LayoutsProps } from "src/utils/types";
+import Footer from "./Footer";
 import Header from "./Header";
 
 export default function Layouts({
@@ -16,12 +18,12 @@ export default function Layouts({
         >
             {withHeader && (
                 <Header>
-                    {/* <Link href="/form-builder">
-                    <a>Form Builder</a>
-                </Link>
-                <Link href="/form-builder?data=sample">
-                    <a>Form Builder With Data</a>
-                </Link> */}
+                    <Link href="/dashboard">
+                        <a>Dashboard</a>
+                    </Link>
+                    <Link href="/data-persebaran">
+                        <a>Persebaran</a>
+                    </Link>
                 </Header>
             )}
             <Stack
@@ -32,6 +34,7 @@ export default function Layouts({
             >
                 {children}
             </Stack>
+            {withFooter && <Footer />}
         </Flex>
     );
 }

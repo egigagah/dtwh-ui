@@ -10,38 +10,38 @@ import { memo, useEffect, useState } from "react";
 
 interface BarProps extends BoxProps {
     data: any;
+    dataKey: any[];
+    dataIndexBy: string;
+    isLoading?: boolean;
 }
 
-const App = ({ data }: BarProps): JSX.Element => {
-    const [isLoaded, setLoaded] = useState(false);
-
+const App = ({
+    data,
+    dataKey,
+    dataIndexBy,
+    isLoading = false,
+}: BarProps): JSX.Element => {
     useEffect(() => {
-        setLoaded(true);
+        console.log(data, "----");
     }, []);
-
     return (
         <>
-            {!isLoaded && (
-                <BarSkeleton isLoaded={isLoaded} width="2rem" height="80%" />
+            {isLoading && (
+                <BarSkeleton isLoaded={isLoading} width="2rem" height="80%" />
             )}
-            {isLoaded && (
+            {!isLoading && (
                 <ResponsiveBar
                     data={data}
-                    keys={[
-                        "hot dog",
-                        "burger",
-                        "sandwich",
-                        "kebab",
-                        "fries",
-                        "donut",
-                    ]}
-                    indexBy="country"
+                    keys={dataKey}
+                    label={(d) => `${d.value}`}
+                    // layout="horizontal"
+                    indexBy={dataIndexBy}
                     margin={{ top: 50, right: 25, bottom: 50, left: 60 }}
                     padding={0.3}
                     groupMode="grouped"
                     valueScale={{ type: "linear" }}
                     indexScale={{ type: "band", round: true }}
-                    colors={{ scheme: "nivo" }}
+                    colors={{ scheme: "category10" }}
                     defs={[
                         {
                             id: "dots",
@@ -56,7 +56,7 @@ const App = ({ data }: BarProps): JSX.Element => {
                             id: "lines",
                             type: "patternLines",
                             background: "inherit",
-                            color: "#eed312",
+                            color: "rgba(255, 255, 255, 0.3)",
                             rotation: -45,
                             lineWidth: 6,
                             spacing: 10,
@@ -65,15 +65,9 @@ const App = ({ data }: BarProps): JSX.Element => {
                     fill={[
                         {
                             match: {
-                                id: "fries",
+                                id: "ditolak",
                             },
                             id: "dots",
-                        },
-                        {
-                            match: {
-                                id: "sandwich",
-                            },
-                            id: "lines",
                         },
                     ]}
                     borderColor={{
@@ -86,7 +80,7 @@ const App = ({ data }: BarProps): JSX.Element => {
                         tickSize: 5,
                         tickPadding: 5,
                         tickRotation: 0,
-                        legend: "country",
+                        legend: "Jumlah Izin",
                         legendPosition: "middle",
                         legendOffset: 32,
                     }}
@@ -94,7 +88,7 @@ const App = ({ data }: BarProps): JSX.Element => {
                         tickSize: 5,
                         tickPadding: 5,
                         tickRotation: 0,
-                        legend: "food",
+                        legend: "Kategori",
                         legendPosition: "middle",
                         legendOffset: -40,
                     }}
@@ -104,6 +98,12 @@ const App = ({ data }: BarProps): JSX.Element => {
                         from: "color",
                         modifiers: [["darker", 1.6]],
                     }}
+                    tooltipLabel={(d) => `${d.id.toString().toUpperCase()}`}
+                    // tooltipLabel={(d) =>
+                    //     `${d.id} ${
+                    //         d.indexValue.toString().match(/\(.*\)/g)?.[0] || "-"
+                    //     }`
+                    // }
                     // legends={[
                     //     {
                     //         dataFrom: "keys",
@@ -129,13 +129,13 @@ const App = ({ data }: BarProps): JSX.Element => {
                     //     },
                     // ]}
                     role="application"
-                    ariaLabel="Nivo bar chart demo"
+                    ariaLabel="Bar chart"
                     barAriaLabel={function (e) {
                         return (
                             e.id +
                             ": " +
                             e.formattedValue +
-                            " in country: " +
+                            " Total: " +
                             e.indexValue
                         );
                     }}
@@ -145,10 +145,7 @@ const App = ({ data }: BarProps): JSX.Element => {
     );
 };
 
-const Bar = memo(
-    App,
-    (prevProp, nextProp) => prevProp.data !== nextProp.datatype,
-);
+const Bar = memo(App, (prevProp, nextProp) => prevProp.data === nextProp.data);
 
 export default Bar;
 

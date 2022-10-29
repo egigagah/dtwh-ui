@@ -24,9 +24,15 @@ import ChartMenus from "./Menus";
 
 interface CardsProps extends BoxProps {
     title: string;
+    dataCollection?: any[];
 }
 
-export const Cards = ({ title, children, ...res }: CardsProps): JSX.Element => {
+export const Cards = ({
+    title,
+    children,
+    dataCollection,
+    ...res
+}: CardsProps): JSX.Element => {
     const [modalEmbedShow, setModalEmbedShow] = useState(false);
     const isFullScreen = useFullScreenHandle();
 
@@ -54,6 +60,7 @@ export const Cards = ({ title, children, ...res }: CardsProps): JSX.Element => {
                 </Heading>
                 <ChartMenus
                     setModalEmbedShow={() => setModalEmbedShow(!modalEmbedShow)}
+                    dataCollections={dataCollection}
                 />
             </HStack>
             <Divider />
