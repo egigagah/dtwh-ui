@@ -18,10 +18,7 @@ export const filtersQuery = () => {
     `;
 };
 
-export const dashboardQuery = ({
-    tahun,
-    status,
-}: FilterDatasType | undefined) => {
+export const dashboardQuery = ({ tahun, status }: FilterDatasType) => {
     const tahuns = tahun ? tahun?.flatMap((x) => x.value) : [-1];
     return gql`
         {
