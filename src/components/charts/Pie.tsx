@@ -55,10 +55,7 @@ const App = ({
                             breakpoint !== "sm"
                                 ? (dimension?.height * 10) / 100
                                 : 0,
-                        bottom:
-                            (dimension?.height *
-                                (breakpoint !== "sm" ? 15 : 8)) /
-                            100,
+                        bottom: (dimension?.height * 8) / 100,
                         left:
                             breakpoint !== "sm"
                                 ? (dimension?.height * 10) / 100
@@ -69,8 +66,8 @@ const App = ({
                     cornerRadius={3}
                     activeOuterRadiusOffset={8}
                     borderWidth={1}
-                    // colors={{ scheme: "paired" }}
-                    arcLinkLabelsTextColor={"black"}
+                    colors={{ scheme: "set1" }}
+                    arcLinkLabelsTextColor="#ffffff"
                     borderColor={{
                         from: "color",
                         modifiers: [["darker", 0.2]],
@@ -80,11 +77,9 @@ const App = ({
                     // arcLinkLabelsTextColor="#333333"
                     // arcLinkLabelsThickness={2}
                     // arcLinkLabelsColor={{ from: "color" }}
+                    sortByValue={true}
                     arcLabelsSkipAngle={10}
-                    arcLabelsTextColor={{
-                        from: "color",
-                        modifiers: [["darker", 2]],
-                    }}
+                    arcLabelsTextColor="#ffffff"
                     defs={[
                         {
                             id: "dots",
@@ -106,11 +101,11 @@ const App = ({
                     ]}
                     legends={[
                         {
-                            anchor: "bottom",
-                            direction: "row",
+                            anchor: "bottom-left",
+                            direction: "column",
                             justify: false,
                             translateX: 0,
-                            translateY: (dimension.height * 10) / 100,
+                            translateY: (dimension.height * 5) / 100,
                             itemsSpacing: 10,
                             itemWidth:
                                 (dimension.width * 80) / 100 / data?.length,

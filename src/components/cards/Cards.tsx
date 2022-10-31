@@ -25,12 +25,14 @@ import ChartMenus from "./Menus";
 interface CardsProps extends BoxProps {
     title: string;
     dataCollection?: any[];
+    bodyH?: number | string;
 }
 
 export const Cards = ({
     title,
     children,
     dataCollection,
+    bodyH,
     ...res
 }: CardsProps): JSX.Element => {
     const [modalEmbedShow, setModalEmbedShow] = useState(false);
@@ -47,6 +49,7 @@ export const Cards = ({
             borderWidth={res?.borderWidth || "1px"}
             borderStyle={res?.borderStyle || "solid"}
             borderColor={res?.borderColor || "gray.200"}
+            bg="white"
         >
             <HStack
                 justifyContent="space-between"
@@ -65,7 +68,7 @@ export const Cards = ({
             </HStack>
             <Divider />
             <FullScreen handle={isFullScreen} className="fullscreen-el">
-                <Flex flex={1} h="80%">
+                <Flex flex={1} h={bodyH || "80%"}>
                     {children}
                 </Flex>
             </FullScreen>

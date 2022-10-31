@@ -80,7 +80,7 @@ const App = ({
                         tickSize: 5,
                         tickPadding: 5,
                         tickRotation: 0,
-                        legend: "Jumlah Izin",
+                        legend: "Kategori",
                         legendPosition: "middle",
                         legendOffset: 32,
                     }}
@@ -88,7 +88,7 @@ const App = ({
                         tickSize: 5,
                         tickPadding: 5,
                         tickRotation: 0,
-                        legend: "Kategori",
+                        legend: "Jumlah Izin",
                         legendPosition: "middle",
                         legendOffset: -40,
                     }}

@@ -1,69 +1,50 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-    Box,
     Flex,
     Heading,
     HStack,
-    IconButton,
-    Menu,
-    MenuButton,
-    MenuItem,
     SimpleGrid,
     Stack,
+    Tag,
     Text,
-    Tooltip,
 } from "@chakra-ui/react";
-import {
-    GetServerSideProps,
-    GetServerSidePropsContext,
-    GetServerSidePropsResult,
-    GetStaticProps,
-} from "next";
+import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
-import Pie from "@components/charts/Pie";
-import { Cards, ChartMenus } from "@components/cards";
+import { Cards } from "@components/cards";
 import Charts from "@components/charts";
 import { dataBar, dataPie } from "src/utils/datas/charts";
-import { FaFileCsv, FaFilePdf } from "react-icons/fa";
-import { MenusWrapper } from "@components/cards/Menus";
-import { CSVLink } from "react-csv";
-import jsPDF from "jspdf";
 import useGraphql from "src/utils/graphql";
-import request, { gql } from "graphql-request";
 import { dashboardQuery } from "src/models";
-import { generateDataPie } from "src/utils/chart/helper";
-import Test from "@components/Test";
-import {
-    dehydrate,
-    QueryCache,
-    QueryClient,
-    useQuery,
-    useQueryClient,
-} from "@tanstack/react-query";
-
-const cacheName = "dashboards";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { FilterDatasType } from "src/utils/types";
+import { useDashboard, cacheName } from "src/utils/query/dashboards";
+import { FilterDashboards } from "@components/filters";
+import moment from "moment";
 
 function Home() {
     const [isLoadingData, setLoadingData] = useState(false);
-    const reportRef = useRef<HTMLDivElement>(null as any);
-    function generatePdf() {
-        const target = document.querySelector("#report");
-        if (!target) return;
-        const report = new jsPDF({
-            orientation: "landscape",
-            unit: "px",
-        });
-        console.log(target);
-        report
-            .html(target as HTMLElement)
-            .then(() => report.save("Dashboard.pdf"));
-    }
+    const [datas, setDatas] = useState<FilterDatasType>({
+        status: {
+            value: "ALL",
+            label: "ALL",
+        },
+        tahun: [
+            {
+                value: -1,
+                label: "ALL",
+            },
+        ],
+    });
 
-    const { data, isLoading, error } = useDashboard();
+    const { data, isLoading, refetch, isRefetching } = useDashboard(datas);
 
     useEffect(() => {
-        if (isLoading !== isLoadingData) setLoadingData(isLoading);
-    }, [isLoading]);
+        setLoadingData(isLoading && !isRefetching);
+    }, [isLoading, isRefetching]);
+
+    useEffect(() => {
+        console.log(datas, "--datas form change");
+    }, [datas]);
 
     return (
         <Flex direction="column" minH="100vh" px={[2, 8, 16]}>
@@ -71,60 +52,110 @@ function Home() {
                 <Stack
                     as={Flex}
                     spacing={4}
-                    w={["full", "full", "full", "75%", "50%"]}
+                    w="full"
                     py={8}
                     flexDirection="column"
                 >
                     <Heading fontSize={["xl", "2xl", "3xl"]}>
                         Dashboard Perizinan
                     </Heading>
-                    <Text fontSize="sm" color="gray.500">
-                        Data ini bersifat open data, dan bersumber dari Data
-                        Warehouse PTSP, yang merupakan kumpulan dari data
-                        Sosial, Pelayanan, Jakevo. <br />
-                    </Text>
-                </Stack>
-                {/* <HStack>
-                    <Tooltip label="Export All to PDF">
-                        <IconButton
-                            aria-label="Print"
-                            icon={<FaFilePdf color="gray" size={20} />}
-                            variant="ghost"
-                            onClick={generatePdf}
-                        />
-                    </Tooltip>
-                    <Tooltip label="Export All to CSV">
-                        <Box>
-                            <IconButton
-                                aria-label="csv"
-                                as={CSVLink}
-                                data={}
-                                variant="ghost"
-                                filename="export-dashboard.csv"
+                    <Stack direction={["column", "row"]} spacing={4}>
+                        <HStack>
+                            <Text
+                                fontSize={["md", "lg", "xl"]}
+                                fontWeight={400}
+                                mb={0}
                             >
-                                <FaFileCsv color="gray" size={20} />
-                            </IconButton>
-                        </Box>
-                    </Tooltip>
-                </HStack> */}
+                                Tahun:
+                            </Text>
+                            {datas.tahun?.map((d, i) => (
+                                <Tag colorScheme="telegram" key={i}>
+                                    {d.label}
+                                </Tag>
+                            ))}
+                        </HStack>
+                        <HStack>
+                            <Text
+                                fontSize={["md", "lg", "xl"]}
+                                fontWeight={400}
+                                mb={0}
+                            >
+                                Status:
+                            </Text>
+                            <Tag colorScheme="telegram">
+                                {datas?.status?.label}
+                            </Tag>
+                        </HStack>
+                    </Stack>
+                    <Flex
+                        w={["full", "full", "full", "75%", "50%"]}
+                        direction="row"
+                    >
+                        <Text fontSize="sm" color="gray.500">
+                            *Data ini diupdate pada tanggal{" "}
+                            {moment().format("DD MMMM YYYY")} dan jam 07.00 WIB{" "}
+                            <br />
+                        </Text>
+                    </Flex>
+                </Stack>
+                <HStack>
+                    <FilterDashboards
+                        datas={datas}
+                        setDatas={setDatas}
+                        onSubmit={refetch}
+                    />
+                </HStack>
             </HStack>
             <SimpleGrid
                 id="report"
-                ref={reportRef}
+                // ref={reportRef}
                 columns={[1, 2, 2, 2]}
                 spacing={8}
                 pb={[8, 16]}
             >
-                <Cards title="Data xxx" dataCollection={dataPie}>
-                    <Charts.Pie
-                        data={data?.getDashboards?.pieStatusAggregate}
+                <Cards
+                    title="Permohonan Berdasarkan Status"
+                    dataCollection={dataPie}
+                    bodyH="full"
+                >
+                    <Charts.TableBidang
+                        data={data?.getDashboards?.bidangSumAggregate}
                         isLoading={isLoadingData}
-                        total={
-                            data?.getDashboards?.totalIzinAggregate?.value || 0
-                        }
                     />
                 </Cards>
-                <Cards title="Data xxx" dataCollection={dataBar}>
+                <Cards
+                    title="Permohonan Berdasarkan Status"
+                    dataCollection={dataPie}
+                >
+                    <Stack w="full" h="full" flex={1} pt={4}>
+                        <Flex direction="row" w="full" justifyContent="center">
+                            <Text mb={0} fontSize="lg" fontWeight={500}>
+                                Total Izin{" "}
+                                <span>
+                                    {
+                                        data?.getDashboards?.totalIzinAggregate
+                                            ?.value
+                                    }
+                                </span>
+                            </Text>
+                        </Flex>
+                        <Stack flex={1} w="full" h="full">
+                            <Charts.Pie
+                                data={data?.getDashboards?.pieStatusAggregate}
+                                isLoading={isLoadingData}
+                                total={
+                                    data?.getDashboards?.totalIzinAggregate
+                                        ?.value || 0
+                                }
+                                h="full"
+                            />
+                        </Stack>
+                    </Stack>
+                </Cards>
+                <Cards
+                    title="Permohonan Berdasarkan Perizinan"
+                    dataCollection={dataBar}
+                >
                     {data && (
                         <Charts.Bar
                             data={data?.getDashboards?.barTableAggregate}
@@ -134,11 +165,11 @@ function Home() {
                         />
                     )}
                 </Cards>
-                <Cards title="Data xxx" dataCollection={dataPie}>
-                    <Pie data={dataPie} isLoading={isLoadingData} total={200} />
-                </Cards>
-                <Cards title="Data xxx" dataCollection={dataPie}>
-                    <Pie data={dataPie} isLoading={isLoadingData} total={200} />
+                <Cards title="Permohonan Perbulan" dataCollection={dataPie}>
+                    <Charts.Line
+                        data={data?.getDashboards?.lineStatusAggregate}
+                        isLoading={isLoadingData}
+                    />
                 </Cards>
             </SimpleGrid>
         </Flex>
@@ -148,7 +179,7 @@ function Home() {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
     const queryClient = new QueryClient();
     async function getData() {
-        return await useGraphql.request(dashboardQuery());
+        return await useGraphql.request(dashboardQuery({}));
     }
     await queryClient.prefetchQuery([cacheName], getData, {
         cacheTime: 12 * 60 * 60 * 1000,
@@ -165,21 +196,3 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
 };
 
 export default Home;
-
-async function getDatas() {
-    console.log("----called get data");
-    return await useGraphql.request(dashboardQuery());
-}
-
-function useDashboard() {
-    const cacheQuery = useQueryClient();
-    const query = cacheQuery.getQueriesData([cacheName])[0];
-    console.log(query, "---- cache");
-    // if (!query) {
-    // }
-    // return query[1];
-    return useQuery([cacheName], getDatas, {
-        staleTime: 12 * 60 * 60 * 1000,
-        cacheTime: 12 * 60 * 60 * 1000,
-    });
-}

@@ -1,13 +1,33 @@
 import { gql } from "graphql-request";
+import { FilterDatasType } from "src/utils/types";
 
-export const dashboardQuery = (
-    tahun: number[] = [-1],
-    status: "SELESAI" | "DITOLAK" | "ALL" = "ALL",
-) => {
-    console.log(tahun, status, "-----tahun");
+export const filtersQuery = () => {
     return gql`
         {
-            getDashboards(tahun: [${tahun}], status: "${status}") {
+            getFiltersDashboard {
+                tahun {
+                    label: tahun
+                    value: tahun
+                }
+                status {
+                    label: status
+                    value: status
+                }
+            }
+        }
+    `;
+};
+
+export const dashboardQuery = ({
+    tahun,
+    status,
+}: FilterDatasType | undefined) => {
+    const tahuns = tahun ? tahun?.flatMap((x) => x.value) : [-1];
+    return gql`
+        {
+            getDashboards(tahun: [${tahuns}], status: "${
+        status?.value || "ALL"
+    }") {
                 tahun
                 status
                 pieStatusAggregate{
