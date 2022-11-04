@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Flex,
     Heading,
@@ -12,39 +12,50 @@ import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
 import { Cards } from "@components/cards";
 import Charts from "@components/charts";
-import { dataBar, dataPie } from "src/utils/datas/charts";
-import useGraphql from "src/utils/graphql";
-import { dashboardQuery } from "src/models";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { FilterDatasType } from "src/utils/types";
-import { useDashboard, cacheName } from "src/utils/query/dashboards";
+import { useDashboard, cacheName, getDatas } from "src/utils/query/dashboards";
 import { FilterDashboards } from "@components/filters";
 import moment from "moment";
+import { Serie } from "@nivo/line";
 
-function Home() {
-    const [isLoadingData, setLoadingData] = useState(false);
-    const [datas, setDatas] = useState<FilterDatasType>({
-        status: {
-            value: "ALL",
+const defaultData = {
+    status: {
+        value: "ALL",
+        label: "ALL",
+    },
+    tahun: [
+        {
+            value: -1,
             label: "ALL",
         },
-        tahun: [
-            {
-                value: -1,
-                label: "ALL",
-            },
-        ],
-    });
+    ],
+};
 
+function Home() {
+    const [datas, setDatas] = useState<FilterDatasType>(defaultData);
     const { data, isLoading, refetch, isRefetching } = useDashboard(datas);
+    function submitFilter(d: FilterDatasType) {
+        setDatas(d);
+        refetch();
+    }
 
-    useEffect(() => {
-        setLoadingData(isLoading && !isRefetching);
-    }, [isLoading, isRefetching]);
+    function generateFilenameSlug(tahun: number[], status: string) {
+        let res = "";
+        if (tahun.includes(-1)) res += "tahun: ALL ";
+        else res += `tahun: ${tahun.join(", ")} `;
+        if (status) res += `status: ${status}`;
+        return res;
+    }
 
-    useEffect(() => {
-        console.log(datas, "--datas form change");
-    }, [datas]);
+    const slugFileName = useMemo(
+        () =>
+            generateFilenameSlug(
+                data?.getDashboards?.tahun || [-1],
+                data?.getDashboards.status || "ALL",
+            ),
+        [data, datas],
+    );
 
     return (
         <Flex direction="column" minH="100vh" px={[2, 8, 16]}>
@@ -101,31 +112,45 @@ function Home() {
                 <HStack>
                     <FilterDashboards
                         datas={datas}
-                        setDatas={setDatas}
-                        onSubmit={refetch}
+                        onSubmit={(d: FilterDatasType) => submitFilter(d)}
                     />
                 </HStack>
             </HStack>
             <SimpleGrid
                 id="report"
-                // ref={reportRef}
                 columns={[1, 2, 2, 2]}
                 spacing={8}
                 pb={[8, 16]}
             >
                 <Cards
-                    title="Permohonan Berdasarkan Status"
-                    dataCollection={dataPie}
+                    title="Permohonan Berdasarkan Bidang"
+                    dataCollection={data?.getDashboards?.bidangSumAggregate}
                     bodyH="full"
+                    fileName={`Permohonan Berdasarkan Perizinan ( ${slugFileName})`}
                 >
                     <Charts.TableBidang
-                        data={data?.getDashboards?.bidangSumAggregate}
-                        isLoading={isLoadingData}
+                        data={data?.getDashboards?.bidangSumAggregate as any[]}
+                        isLoading={isLoading && isRefetching}
                     />
                 </Cards>
                 <Cards
+                    title="Permohonan Berdasarkan Perizinan"
+                    dataCollection={data?.getDashboards?.barTableAggregate}
+                    fileName={`Permohonan Berdasarkan Perizinan ( ${slugFileName})`}
+                >
+                    {data && (
+                        <Charts.Bar
+                            data={data?.getDashboards?.barTableAggregate}
+                            dataIndexBy="label"
+                            dataKey={["selesai", "ditolak"]}
+                            isLoading={isLoading && isRefetching}
+                        />
+                    )}
+                </Cards>
+                <Cards
                     title="Permohonan Berdasarkan Status"
-                    dataCollection={dataPie}
+                    dataCollection={data?.getDashboards?.pieStatusAggregate}
+                    fileName={`Permohonan Berdasarkan Status ( ${slugFileName})`}
                 >
                     <Stack w="full" h="full" flex={1} pt={4}>
                         <Flex direction="row" w="full" justifyContent="center">
@@ -142,7 +167,7 @@ function Home() {
                         <Stack flex={1} w="full" h="full">
                             <Charts.Pie
                                 data={data?.getDashboards?.pieStatusAggregate}
-                                isLoading={isLoadingData}
+                                isLoading={isLoading && isRefetching}
                                 total={
                                     data?.getDashboards?.totalIzinAggregate
                                         ?.value || 0
@@ -153,22 +178,15 @@ function Home() {
                     </Stack>
                 </Cards>
                 <Cards
-                    title="Permohonan Berdasarkan Perizinan"
-                    dataCollection={dataBar}
+                    title="Permohonan Berdasarkan Bulan"
+                    dataCollection={data?.getDashboards?.lineStatusCsv as any[]}
+                    fileName={`Permohonan Berdasarkan Bulan ( ${slugFileName})`}
                 >
-                    {data && (
-                        <Charts.Bar
-                            data={data?.getDashboards?.barTableAggregate}
-                            dataIndexBy="label"
-                            dataKey={["selesai", "ditolak"]}
-                            isLoading={isLoadingData}
-                        />
-                    )}
-                </Cards>
-                <Cards title="Permohonan Perbulan" dataCollection={dataPie}>
                     <Charts.Line
-                        data={data?.getDashboards?.lineStatusAggregate}
-                        isLoading={isLoadingData}
+                        data={
+                            data?.getDashboards?.lineStatusAggregate as Serie[]
+                        }
+                        isLoading={isLoading && isRefetching}
                     />
                 </Cards>
             </SimpleGrid>
@@ -179,9 +197,9 @@ function Home() {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
     const queryClient = new QueryClient();
     async function getData() {
-        return await useGraphql.request(dashboardQuery({}));
+        return await getDatas(defaultData);
     }
-    await queryClient.prefetchQuery([cacheName], getData, {
+    await queryClient.prefetchQuery([cacheName, defaultData], getData, {
         cacheTime: 12 * 60 * 60 * 1000,
         staleTime: 12 * 60 * 60 * 1000,
     });

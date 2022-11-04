@@ -1,57 +1,64 @@
 import { gql } from "graphql-request";
-import { FilterDatasType } from "src/utils/types";
 
-export const filtersQuery = () => {
-    return gql`
-        {
-            getFiltersDashboard {
-                tahun {
-                    label: tahun
-                    value: tahun
-                }
-                status {
-                    label: status
-                    value: status
-                }
+export const filtersQuery = gql`
+    {
+        getFiltersDashboard {
+            tahun {
+                label: tahun
+                value: tahun
+            }
+            status {
+                label: status
+                value: status
             }
         }
-    `;
-};
+    }
+`;
 
-export const dashboardQuery = ({ tahun, status }: FilterDatasType) => {
-    const tahuns = tahun ? tahun?.flatMap((x) => x.value) : [-1];
-    return gql`
-        {
-            getDashboards(tahun: [${tahuns}], status: "${
-        status?.value || "ALL"
-    }") {
-                tahun
-                status
-                pieStatusAggregate{
-                    label: _id
-                    value
-                }
-                totalIzinAggregate{
+export const dashboardQuery = gql`
+    query getDashboards($tahun: [Int!], $status: String) {
+        getDashboards(tahun: $tahun, status: $status) {
+            tahun
+            status
+            pieStatusAggregate {
                 label: _id
                 value
-                }
-                bidangSumAggregate{
+            }
+            totalIzinAggregate {
+                value
+            }
+            bidangSumAggregate {
                 label: _id
                 value
-                }
-                barTableAggregate{
+            }
+            barTableAggregate {
+                kode: kode
                 label: _id
                 selesai
                 ditolak
-                }
-                lineStatusAggregate{
+            }
+            lineStatusAggregate {
                 id: _id
-                data{
+                data {
                     x
                     y
                 }
-                }
+            }
+            lineStatusCsv {
+                bulan
+                ditolak
+                selesai
             }
         }
-    `;
-};
+    }
+`;
+
+export const lineStatusCsvQuery = gql`
+    query lineStatusCsvAggregate($tahun: [Int!]) {
+        lineStatusCsvAggregate(tahun: $tahun) {
+            bulan: _id
+            ditolak
+            selesai
+        }
+    }
+`;

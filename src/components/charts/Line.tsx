@@ -4,8 +4,6 @@ import { memo } from "react";
 
 type LineChartProps = {
     data: Serie[];
-    // dataKey?: any[];
-    // dataIndexBy?: string;
     isLoading?: boolean;
 };
 
@@ -26,7 +24,7 @@ const App = ({ data, isLoading }: LineChartProps): JSX.Element => {
                         stacked: true,
                         reverse: false,
                     }}
-                    colors={{ scheme: "dark2" }}
+                    colors={{ scheme: "set1" }}
                     axisTop={null}
                     axisRight={null}
                     axisBottom={{
@@ -36,6 +34,7 @@ const App = ({ data, isLoading }: LineChartProps): JSX.Element => {
                         legend: "Bulan",
                         legendOffset: 36,
                         legendPosition: "middle",
+                        format: (d) => `${d.toString().slice(0, 3)}`,
                     }}
                     axisLeft={{
                         tickSize: 5,
@@ -86,7 +85,7 @@ const App = ({ data, isLoading }: LineChartProps): JSX.Element => {
     );
 };
 
-const LineChart = memo(App, (p, n) => p.data !== n.data);
+const LineChart = memo(App, (p, n) => p.data === n.data);
 
 export default LineChart;
 

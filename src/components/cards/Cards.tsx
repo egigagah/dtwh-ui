@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Heading,
@@ -6,8 +6,6 @@ import {
     Flex,
     Divider,
     HStack,
-    MenuItem,
-    useDisclosure,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -15,15 +13,14 @@ import {
     ModalCloseButton,
     ModalBody,
     ModalFooter,
-    ModalProps,
     Code,
-    Button,
 } from "@chakra-ui/react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import ChartMenus from "./Menus";
 
 interface CardsProps extends BoxProps {
     title: string;
+    fileName?: string;
     dataCollection?: any[];
     bodyH?: number | string;
 }
@@ -32,6 +29,7 @@ export const Cards = ({
     title,
     children,
     dataCollection,
+    fileName,
     bodyH,
     ...res
 }: CardsProps): JSX.Element => {
@@ -64,6 +62,7 @@ export const Cards = ({
                 <ChartMenus
                     setModalEmbedShow={() => setModalEmbedShow(!modalEmbedShow)}
                     dataCollections={dataCollection}
+                    fileName={`${fileName || title}.csv`}
                 />
             </HStack>
             <Divider />

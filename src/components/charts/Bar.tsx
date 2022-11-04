@@ -1,9 +1,11 @@
 import {
+    Box,
     BoxProps,
     Flex,
     HStack,
     Skeleton,
     SkeletonProps,
+    Text,
 } from "@chakra-ui/react";
 import { ResponsiveBar } from "@nivo/bar";
 import { memo, useEffect, useState } from "react";
@@ -21,9 +23,6 @@ const App = ({
     dataIndexBy,
     isLoading = false,
 }: BarProps): JSX.Element => {
-    useEffect(() => {
-        console.log(data, "----");
-    }, []);
     return (
         <>
             {isLoading && (
@@ -33,9 +32,11 @@ const App = ({
                 <ResponsiveBar
                     data={data}
                     keys={dataKey}
-                    label={(d) => `${d.value}`}
+                    enableLabel={false}
+                    // label={(d) => `${d.value}`}
                     // layout="horizontal"
                     indexBy={dataIndexBy}
+                    valueFormat={(d) => `${d} val`}
                     margin={{ top: 50, right: 25, bottom: 50, left: 60 }}
                     padding={0.3}
                     groupMode="grouped"
@@ -79,10 +80,11 @@ const App = ({
                     axisBottom={{
                         tickSize: 5,
                         tickPadding: 5,
-                        tickRotation: 0,
-                        legend: "Kategori",
-                        legendPosition: "middle",
-                        legendOffset: 32,
+                        tickRotation: -56,
+                        format: (d) => `${d}`,
+                        // legend: "Kategori",
+                        // legendPosition: "middle",
+                        // legendOffset: 32,
                     }}
                     axisLeft={{
                         tickSize: 5,
@@ -94,11 +96,34 @@ const App = ({
                     }}
                     labelSkipWidth={12}
                     labelSkipHeight={12}
-                    labelTextColor={{
-                        from: "color",
-                        modifiers: [["darker", 1.6]],
-                    }}
-                    tooltipLabel={(d) => `${d.id.toString().toUpperCase()}`}
+                    labelTextColor="#FFFFFF"
+                    // tooltipLabel={(d) =>
+                    //     `${d.indexValue} - ${d.id.toString().toUpperCase()}`
+                    // }
+                    tooltip={(d) => (
+                        <Box
+                            w="44"
+                            h="fit-content"
+                            bg="white"
+                            shadow="md"
+                            p={2}
+                            rounded="lg"
+                            border=".3px solid grey"
+                        >
+                            <Text fontSize="xs" mb={0}>
+                                {d.data.kode}
+                            </Text>
+                            <Text fontSize="xs" mb={1} fontWeight="semibold">
+                                {d.indexValue}
+                            </Text>
+                            <Text fontSize="xs" mb={0}>
+                                {d.id.toString().toUpperCase()}:{" "}
+                                <span style={{ fontWeight: "bold" }}>
+                                    {d.value}
+                                </span>
+                            </Text>
+                        </Box>
+                    )}
                     // tooltipLabel={(d) =>
                     //     `${d.id} ${
                     //         d.indexValue.toString().match(/\(.*\)/g)?.[0] || "-"

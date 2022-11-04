@@ -1,16 +1,12 @@
 import {
-    Flex,
     forwardRef,
     HStack,
     IconButton,
     Menu,
     MenuButton,
     MenuItem,
-    MenuItemProps,
     MenuList,
-    MenuListProps,
     StackProps,
-    Text,
 } from "@chakra-ui/react";
 import { ReactI18NextChild } from "react-i18next";
 import { RiMenuLine } from "react-icons/ri";
@@ -27,7 +23,7 @@ function Menus({ children }: { children: ReactI18NextChild }): JSX.Element {
                 icon={<RiMenuLine />}
                 variant="ghost"
             />
-            <MenuList>{children}</MenuList>
+            <MenuList zIndex="docked">{children}</MenuList>
         </Menu>
     );
 }
@@ -35,14 +31,20 @@ function Menus({ children }: { children: ReactI18NextChild }): JSX.Element {
 export default function ChartMenus({
     setModalEmbedShow,
     dataCollections,
+    fileName = "export-data.csv",
 }: {
     setModalEmbedShow?: () => void;
     dataCollections?: any[];
+    fileName?: string;
 }): JSX.Element {
     return (
         <Menus>
             {dataCollections && (
-                <MenuCsv dataCollections={dataCollections} command="⌘⇧D">
+                <MenuCsv
+                    dataCollections={dataCollections}
+                    fileName={fileName}
+                    command="⌘⇧D"
+                >
                     Download CSV
                 </MenuCsv>
             )}
@@ -53,7 +55,11 @@ export default function ChartMenus({
     );
 }
 
-type MenuCsvProps = StackProps & { dataCollections: Data; command?: string };
+type MenuCsvProps = StackProps & {
+    dataCollections: Data;
+    fileName: string;
+    command?: string;
+};
 
 const MenuCsv = forwardRef<MenuCsvProps, any>((props, ref) => {
     return (
@@ -66,7 +72,7 @@ const MenuCsv = forwardRef<MenuCsvProps, any>((props, ref) => {
         >
             <CSVLink
                 {...ref}
-                filename={"export-data.csv"}
+                filename={props.fileName}
                 data={props.dataCollections}
             >
                 Download CSV

@@ -3,6 +3,7 @@ import {
     Box,
     Button,
     FormControl,
+    FormErrorMessage,
     FormLabel,
     Modal,
     ModalBody,
@@ -20,19 +21,53 @@ import { FaFilter } from "react-icons/fa";
 import ReactSelect from "react-select";
 import { FilterDatasType } from "src/utils/types";
 import { useFilterDashboard } from "src/utils/query/dashboards";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const filterSchema = yup
+    .object({
+        tahun: yup
+            .array()
+            .of(
+                yup
+                    .object()
+                    .shape({
+                        value: yup.number().required(),
+                        label: yup.mixed().required(),
+                    })
+                    .required(),
+            )
+            .min(1, "Pilih tahun terlebih dahulu")
+            .required("Pilih tahun terlebih dahulu"),
+        status: yup
+            .object()
+            .shape({
+                value: yup.string(),
+                label: yup.string(),
+            })
+            .required("Pilih status terlebih dahulu"),
+    })
+    .required();
 
 export default function FilterModal({
     datas,
-    setDatas,
     onSubmit,
 }: {
     datas: FilterDatasType;
-    setDatas: (d: FilterDatasType) => void;
-    onSubmit: (d?: any) => void;
+    onSubmit: (d: FilterDatasType) => void;
 }) {
-    console.log(datas, "--default val");
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        handleSubmit,
+        control,
+        formState: { errors, isValid },
+        reset,
+    } = useForm({
+        defaultValues: datas,
+        resolver: yupResolver(filterSchema),
+        mode: "onChange",
+    });
 
     const { data, isLoading, error } = useFilterDashboard();
 
@@ -49,6 +84,20 @@ export default function FilterModal({
         }
     }, [data]);
 
+    function submitForm(data: FilterDatasType) {
+        onSubmit(data);
+        closeModal(false);
+    }
+
+    function closeModal(isReset = true) {
+        if (isReset)
+            reset({
+                tahun: datas.tahun,
+                status: datas.status,
+            });
+        onClose();
+    }
+
     return (
         <>
             <Tooltip label="Filter Data">
@@ -64,10 +113,10 @@ export default function FilterModal({
                 </Box>
             </Tooltip>
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onClose={() => closeModal()}>
                 <ModalOverlay />
                 <ModalContent>
-                    <form>
+                    <form onSubmit={handleSubmit(submitForm)}>
                         <ModalHeader>Filter Dashboard</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
@@ -75,44 +124,49 @@ export default function FilterModal({
                                 Filter data yang ingin anda tampilkan di
                                 dashboard
                             </Text>
-                            {data && !isLoading && !error && (
-                                <Stack spacing={4}>
-                                    <FormControl>
-                                        <FormLabel>Tahun</FormLabel>
-                                        <ReactSelect
-                                            value={datas.tahun}
-                                            isMulti
-                                            name="colors"
-                                            options={
-                                                data?.getFiltersDashboard?.tahun
-                                            }
-                                            onChange={(d) => {
-                                                setDatas({
-                                                    ...datas,
-                                                    tahun: d,
-                                                });
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormControl>
-                                        <FormLabel>Status</FormLabel>
-                                        <ReactSelect
-                                            value={datas.status}
-                                            name="colors"
-                                            options={
-                                                data?.getFiltersDashboard
-                                                    ?.status
-                                            }
-                                            onChange={(d) => {
-                                                setDatas({
-                                                    ...datas,
-                                                    status: d,
-                                                });
-                                            }}
-                                        />
-                                    </FormControl>
-                                </Stack>
-                            )}
+                            <Stack spacing={4}>
+                                <FormControl isInvalid={!!errors.tahun}>
+                                    <FormLabel>Tahun</FormLabel>
+                                    <Controller
+                                        name="tahun"
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <ReactSelect
+                                                {...field}
+                                                isMulti
+                                                options={
+                                                    data?.getFiltersDashboard
+                                                        ?.tahun
+                                                }
+                                            />
+                                        )}
+                                    />
+                                    <FormErrorMessage>
+                                        {errors?.tahun?.message}
+                                    </FormErrorMessage>
+                                </FormControl>
+                                <FormControl isInvalid={!!errors.status}>
+                                    <FormLabel>Status</FormLabel>
+                                    <Controller
+                                        name="status"
+                                        control={control}
+                                        rules={{ required: true }}
+                                        render={({ field }) => (
+                                            <ReactSelect
+                                                {...field}
+                                                options={
+                                                    data?.getFiltersDashboard
+                                                        ?.status
+                                                }
+                                            />
+                                        )}
+                                    />
+                                    <FormErrorMessage>
+                                        {errors?.status?.message}
+                                    </FormErrorMessage>
+                                </FormControl>
+                            </Stack>
                         </ModalBody>
 
                         <ModalFooter>
@@ -120,16 +174,14 @@ export default function FilterModal({
                                 variant="ghost"
                                 colorScheme="gray"
                                 mr={3}
-                                onClick={onClose}
+                                onClick={() => closeModal()}
                             >
                                 Close
                             </Button>
                             <Button
                                 colorScheme="blue"
-                                onClick={() => {
-                                    onSubmit();
-                                    onClose();
-                                }}
+                                type="submit"
+                                disabled={!isValid}
                             >
                                 Save
                             </Button>

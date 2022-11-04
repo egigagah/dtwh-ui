@@ -1,9 +1,6 @@
 import { memo, useEffect } from "react";
 
 function App({ data, isLoading }: { data: any; isLoading: boolean }) {
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
     return (
         <div>
             Halloo
