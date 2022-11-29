@@ -1,4 +1,5 @@
 import { Flex, HStack, Skeleton, SkeletonProps } from "@chakra-ui/react";
+import Skeletons from "@components/skeletons";
 import { ResponsiveLine, Serie } from "@nivo/line";
 import { memo } from "react";
 
@@ -78,9 +79,7 @@ const App = ({ data, isLoading }: LineChartProps): JSX.Element => {
                     ]}
                 />
             )}
-            {isLoading && (
-                <BarSkeleton isLoaded={isLoading} width="2rem" height="80%" />
-            )}
+            {isLoading && <Skeletons.BarSkeleton />}
         </>
     );
 };
@@ -88,26 +87,3 @@ const App = ({ data, isLoading }: LineChartProps): JSX.Element => {
 const LineChart = memo(App, (p, n) => p.data === n.data);
 
 export default LineChart;
-
-function BarSkeleton({ ...res }: SkeletonProps): JSX.Element {
-    return (
-        <HStack
-            spacing={4}
-            p={[4, 8]}
-            justifyContent="center"
-            alignItems="center"
-            as={Flex}
-            flex={1}
-            w="100%"
-            h="100%"
-            display={res.isLoaded ? "none" : "flex"}
-        >
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-        </HStack>
-    );
-}

@@ -13,11 +13,12 @@ import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslati
 import { Cards } from "@components/cards";
 import Charts from "@components/charts";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { FilterDatasType } from "src/utils/types";
+import { CustomAppElement, FilterDatasType } from "src/utils/types";
 import { useDashboard, cacheName, getDatas } from "src/utils/query/dashboards";
 import { FilterDashboards } from "@components/filters";
 import moment from "moment";
 import { Serie } from "@nivo/line";
+import { useSession } from "next-auth/react";
 
 const defaultData = {
     status: {
@@ -32,14 +33,14 @@ const defaultData = {
     ],
 };
 
-function Home() {
+const AdminHome: CustomAppElement = () => {
     const [datas, setDatas] = useState<FilterDatasType>(defaultData);
     const { data, isLoading, refetch, isRefetching } = useDashboard(datas);
     function submitFilter(d: FilterDatasType) {
-        console.warn("refetch run", "---");
         setDatas(d);
         refetch();
     }
+    const { data: session, status } = useSession();
 
     function generateFilenameSlug(tahun: number[], status: string) {
         let res = "";
@@ -58,10 +59,8 @@ function Home() {
         [data, datas],
     );
 
-    console.log(isLoading, isRefetching, "--- true");
-
     return (
-        <Flex direction="column" minH="100vh" px={[2, 8, 16]}>
+        <Flex direction="column" h="full" px={[2, 8, 16]}>
             <HStack justifyContent="space-between">
                 <Stack
                     as={Flex}
@@ -201,7 +200,7 @@ function Home() {
             </SimpleGrid>
         </Flex>
     );
-}
+};
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
     const queryClient = new QueryClient();
@@ -222,4 +221,12 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     };
 };
 
-export default Home;
+AdminHome.appProps = {
+    Layout: {
+        withHeader: true,
+        withFooter: false,
+        adminLayout: true,
+    },
+};
+
+export default AdminHome;

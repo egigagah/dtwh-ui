@@ -1,40 +1,29 @@
-import { Flex, Stack } from "@chakra-ui/react";
-import Link from "next/link";
 import { LayoutsProps } from "src/utils/types";
-import Footer from "./Footer";
-import Header from "./Header";
+import AdminLayout from "./admin";
+import Layout from "./Layout";
 
 export default function Layouts({
     children,
     withHeader = true,
     withFooter = true,
+    adminLayout = false,
 }: LayoutsProps): JSX.Element {
-    return (
-        <Flex
-            flex={1}
-            flexDirection="column"
-            bg={["white", "gray.50"]}
-            minH="100vh"
-        >
-            {withHeader && (
-                <Header>
-                    <Link href="/dashboard">
-                        <a>Dashboard</a>
-                    </Link>
-                    <Link href="/data-persebaran">
-                        <a>Persebaran</a>
-                    </Link>
-                </Header>
-            )}
-            <Stack
-                flex={1}
-                justifyContent={["flex-start", "center"]}
-                spacing={4}
-                px={[4, 0]}
-            >
-                {children}
-            </Stack>
-            {withFooter && <Footer />}
-        </Flex>
-    );
+    console.log(adminLayout, "-- layout session");
+    if (adminLayout) {
+        return (
+            <AdminLayout
+                children={children}
+                withFooter={withFooter}
+                withHeader={withHeader}
+            />
+        );
+    } else {
+        return (
+            <Layout
+                children={children}
+                withFooter={withFooter}
+                withHeader={withHeader}
+            />
+        );
+    }
 }

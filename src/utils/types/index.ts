@@ -10,6 +10,7 @@ export type CustomAppProps = {
     Layout?: {
         withHeader?: boolean;
         withFooter?: boolean;
+        adminLayout?: boolean;
     };
     Protected?: boolean;
     Permission?: string[];
@@ -18,6 +19,7 @@ export type CustomAppProps = {
 export type Layouts = {
     withHeader?: boolean;
     withFooter?: boolean;
+    adminLayout?: boolean;
 };
 
 export type LayoutsProps = Layouts & PropsWithChildren;

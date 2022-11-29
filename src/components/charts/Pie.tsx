@@ -10,6 +10,7 @@ import {
 import { ResponsivePie } from "@nivo/pie";
 import { memo, useRef } from "react";
 import { useSize } from "@chakra-ui/react-use-size";
+import Skeletons from "@components/skeletons";
 
 interface PieProps extends StackProps {
     data: any;
@@ -39,7 +40,8 @@ const App = ({
             spacing={4}
         >
             {isLoading && dimension && (
-                <SkeletonPie isLoaded={isLoading} dimension={dimension} />
+                <Skeletons.PieSkeleton dimension={dimension} />
+                // <SkeletonPie isLoaded={isLoading} dimension={dimension} />
             )}
             {dimension && data && !isLoading && (
                 <ResponsivePie

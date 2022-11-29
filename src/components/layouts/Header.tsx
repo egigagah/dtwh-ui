@@ -13,23 +13,30 @@ import {
     IconButton,
     Stack,
     useDisclosure,
+    UseDisclosureProps,
 } from "@chakra-ui/react";
+import { signOut, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode, useRef } from "react";
+import { ReactNode, Ref, useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import Language from "./Language";
 
 export default function Header({
     children,
     icon,
+    btnMenuRef,
+    disclosure,
 }: {
+    disclosure?: UseDisclosureProps;
+    btnMenuRef?: Ref<any>;
     children: ReactNode;
     icon?: ReactNode | string;
 }): JSX.Element {
     const { t } = useTranslation();
     const route = useRouter();
+    const { data: session } = useSession();
 
     const onToggleLanguageClick = (newLocale: string) => {
         const { pathname, asPath, query } = route;
@@ -46,6 +53,29 @@ export default function Header({
                     h="25px"
                 />
                 <Divider display={["block", "none"]} orientation="horizontal" />
+                {session && (
+                    <Link href="/api/auth/signout">
+                        <a
+                            onClick={(e) => {
+                                e.preventDefault();
+                                signOut({ redirect: true, callbackUrl: "/" });
+                            }}
+                        >
+                            {t("signout")}
+                        </a>
+                    </Link>
+                )}
+                {!session && (
+                    <Link href="/login">
+                        <a>{t("signin")}</a>
+                    </Link>
+                )}
+                <Divider
+                    display={["none", "block"]}
+                    orientation="vertical"
+                    h="25px"
+                />
+                <Divider display={["block", "none"]} orientation="horizontal" />
                 <Language
                     listItem={route?.locales || []}
                     onToggleLang={onToggleLanguageClick}
@@ -54,6 +84,12 @@ export default function Header({
                 />
             </>
         );
+    };
+
+    const handleMenuBtn = () => {
+        if (disclosure && disclosure?.onClose && disclosure.onOpen) {
+            disclosure.isOpen ? disclosure.onClose() : disclosure.onOpen();
+        }
     };
 
     return (
@@ -70,6 +106,16 @@ export default function Header({
             bg="white"
         >
             <Box fontSize="xl">
+                {disclosure && disclosure.onClose && disclosure.onOpen && (
+                    <IconButton
+                        aria-label="sidebar-menu"
+                        icon={<RiMenu3Line />}
+                        onClick={handleMenuBtn}
+                        ref={btnMenuRef}
+                        variant="ghost"
+                        mr={4}
+                    />
+                )}
                 <Link href="/">{icon || <a>{t("logo-here")}</a>}</Link>
             </Box>
             <HStack spacing={4} display={["none", "flex"]}>

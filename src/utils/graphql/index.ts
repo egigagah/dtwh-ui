@@ -1,4 +1,5 @@
 import { GraphQLClient } from "graphql-request";
+import * as Auth from "./Auth";
 
 const useGraphql = new GraphQLClient(
     (process.env.NEXT_PUBLIC_API_URL as string) ||
@@ -9,3 +10,4 @@ const useGraphql = new GraphQLClient(
 );
 
 export default useGraphql;
+export const AuthClient = { ...Auth };

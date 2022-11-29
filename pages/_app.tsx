@@ -13,8 +13,12 @@ import {
     QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { SessionProvider, useSession } from "next-auth/react";
 
-function MyApp({ Component, pageProps }: AppProps): JSX.Element {
+function MyApp({
+    Component,
+    pageProps: { session, ...pageProps },
+}: AppProps): JSX.Element {
     const queryClient = new QueryClient();
     const [componentState, setCompononentState] = useState<
         CustomAppProps | undefined
@@ -33,16 +37,18 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     return (
         <>
             <NextNProgress />
-            <ChakraProvider theme={theme}>
-                <QueryClientProvider client={queryClient}>
-                    <ReactQueryDevtools initialIsOpen={false} />
-                    <Hydrate state={pageProps.dehydratedState}>
-                        <Layout {...componentState?.Layout}>
-                            <Component {...pageProps} />
-                        </Layout>
-                    </Hydrate>
-                </QueryClientProvider>
-            </ChakraProvider>
+            <SessionProvider session={session}>
+                <ChakraProvider theme={theme}>
+                    <QueryClientProvider client={queryClient}>
+                        <ReactQueryDevtools initialIsOpen={false} />
+                        <Hydrate state={pageProps.dehydratedState}>
+                            <Layout {...componentState?.Layout}>
+                                <Component {...pageProps} />
+                            </Layout>
+                        </Hydrate>
+                    </QueryClientProvider>
+                </ChakraProvider>
+            </SessionProvider>
         </>
     );
 }

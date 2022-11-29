@@ -7,8 +7,9 @@ import {
     SkeletonProps,
     Text,
 } from "@chakra-ui/react";
+import Skeletons from "@components/skeletons";
 import { ResponsiveBar } from "@nivo/bar";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 
 interface BarProps extends BoxProps {
     data: any;
@@ -25,9 +26,8 @@ const App = ({
 }: BarProps): JSX.Element => {
     return (
         <>
-            {isLoading && (
-                <BarSkeleton isLoaded={isLoading} width="2rem" height="80%" />
-            )}
+            {/* <BarSkeleton isLoaded={isLoading} width="2rem" height="80%" /> */}
+            {isLoading && <Skeletons.BarSkeleton />}
             {!isLoading && (
                 <ResponsiveBar
                     data={data}
@@ -173,26 +173,3 @@ const App = ({
 const Bar = memo(App, (prevProp, nextProp) => prevProp.data === nextProp.data);
 
 export default Bar;
-
-function BarSkeleton({ ...res }: SkeletonProps): JSX.Element {
-    return (
-        <HStack
-            spacing={4}
-            p={[4, 8]}
-            justifyContent="center"
-            alignItems="center"
-            as={Flex}
-            flex={1}
-            w="100%"
-            h="100%"
-            display={res.isLoaded ? "none" : "flex"}
-        >
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-        </HStack>
-    );
-}

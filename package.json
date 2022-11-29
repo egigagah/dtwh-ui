@@ -34,6 +34,7 @@
     "jspdf": "^2.5.1",
     "moment": "^2.29.4",
     "next": "12.2.5",
+    "next-auth": "^4.10.3",
     "next-compose-plugins": "^2.2.1",
     "next-i18next": "12.0.1",
     "nextjs-progressbar": "^0.0.14",
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.13.11",
+    "@graphql-codegen/client-preset": "1.1.3",
     "@svgr/cli": "^5.5.0",
     "@testing-library/react": "^11.2.3",
     "@testing-library/react-hooks": "^5.0.0",
@@ -70,8 +72,7 @@
     "lint-staged": "^10.5.3",
     "nock": "^13.0.6",
     "ts-jest": "^26.4.4",
-    "typescript": "^4.1.3",
-    "@graphql-codegen/client-preset": "1.1.3"
+    "typescript": "^4.1.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
