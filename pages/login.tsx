@@ -6,7 +6,6 @@ import {
     Button,
     Center,
     CloseButton,
-    Code,
     Flex,
     FormControl,
     FormErrorMessage,
@@ -16,11 +15,13 @@ import {
     Input,
     Stack,
     useDisclosure,
+    VStack,
 } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { GetStaticProps } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
@@ -40,17 +41,18 @@ const loginSchema = yup
     .required();
 
 export default function Login({ locale }: { locale: string }): JSX.Element {
-    console.log(locale, "--locale");
-    const callbackUrl = locale !== "id" ? `/${locale}/admin` : "/admin";
+    const router = useRouter();
+    const targetUrl = (router.query?.callbackUrl as string) || "/admin";
+    const defaultUrl = locale !== "id" ? `/${locale}${targetUrl}` : targetUrl;
+    const callbackUrl = defaultUrl;
+    console.log(callbackUrl, locale);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState<string | undefined>(undefined);
     const { onClose, onOpen, isOpen } = useDisclosure({ defaultIsOpen: false });
     const {
         handleSubmit,
-        control,
         register,
         formState: { errors, isValid, touchedFields },
-        reset,
     } = useForm({
         defaultValues: { email: "user@app.com", password: "123456" },
         resolver: yupResolver(loginSchema),
@@ -88,7 +90,7 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
         <Flex flex={1} h="full" w="full" alignItems="center">
             <Center h="full" w="full">
                 {status === "unauthenticated" && (
-                    <Box w="md">
+                    <Box w="lg" shadow="xl" bg="white" p={8} rounded="xl">
                         {isOpen && (
                             <Alert
                                 status="error"
@@ -106,37 +108,41 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
                             </Alert>
                         )}
                         <form onSubmit={handleSubmit(submitForm)}>
-                            <Stack spacing={4} w="full">
-                                <Heading>Login</Heading>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors.email && touchedFields.email
-                                    }
-                                >
-                                    <FormLabel>Email</FormLabel>
-                                    <Input
-                                        type="email"
-                                        {...register("email")}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors.email?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors.password &&
-                                        touchedFields.password
-                                    }
-                                >
-                                    <FormLabel>Password</FormLabel>
-                                    <Input
-                                        type="password"
-                                        {...register("password")}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors.password?.message || "halloo"}
-                                    </FormErrorMessage>
-                                </FormControl>
+                            <Stack spacing={8} w="full">
+                                <Heading textDecor="underline">Login</Heading>
+                                <VStack spacing={4}>
+                                    <FormControl
+                                        isInvalid={
+                                            !!errors.email &&
+                                            touchedFields.email
+                                        }
+                                    >
+                                        <FormLabel>Email</FormLabel>
+                                        <Input
+                                            type="email"
+                                            {...register("email")}
+                                        />
+                                        <FormErrorMessage>
+                                            {errors.email?.message}
+                                        </FormErrorMessage>
+                                    </FormControl>
+                                    <FormControl
+                                        isInvalid={
+                                            !!errors.password &&
+                                            touchedFields.password
+                                        }
+                                    >
+                                        <FormLabel>Password</FormLabel>
+                                        <Input
+                                            type="password"
+                                            {...register("password")}
+                                        />
+                                        <FormErrorMessage>
+                                            {errors.password?.message ||
+                                                "halloo"}
+                                        </FormErrorMessage>
+                                    </FormControl>
+                                </VStack>
                                 <Button
                                     type="submit"
                                     disabled={!isValid}

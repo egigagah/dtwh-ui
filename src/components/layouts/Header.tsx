@@ -15,9 +15,9 @@ import {
     useDisclosure,
     UseDisclosureProps,
 } from "@chakra-ui/react";
+import NextLink from "@components/links";
 import { signOut, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, Ref, useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
@@ -54,22 +54,17 @@ export default function Header({
                 />
                 <Divider display={["block", "none"]} orientation="horizontal" />
                 {session && (
-                    <Link href="/api/auth/signout">
-                        <a
-                            onClick={(e) => {
-                                e.preventDefault();
-                                signOut({ redirect: true, callbackUrl: "/" });
-                            }}
-                        >
-                            {t("signout")}
-                        </a>
-                    </Link>
+                    <NextLink
+                        href="/api/auth/signout"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            signOut({ redirect: true, callbackUrl: "/" });
+                        }}
+                    >
+                        {t("signout")}
+                    </NextLink>
                 )}
-                {!session && (
-                    <Link href="/login">
-                        <a>{t("signin")}</a>
-                    </Link>
-                )}
+                {!session && <NextLink href="/login">{t("signin")}</NextLink>}
                 <Divider
                     display={["none", "block"]}
                     orientation="vertical"
@@ -116,7 +111,7 @@ export default function Header({
                         mr={4}
                     />
                 )}
-                <Link href="/">{icon || <a>{t("logo-here")}</a>}</Link>
+                <NextLink href="/">{icon || t("logo-here")}</NextLink>
             </Box>
             <HStack spacing={4} display={["none", "flex"]}>
                 <Menus />
@@ -157,9 +152,9 @@ const MobileMenus = forwardRef<MobileMenusProps, "div">((props, ref) => {
                 <DrawerContent>
                     <DrawerCloseButton />
                     <DrawerHeader>
-                        <Link href="/">
-                            {props.icon || <a>{t("logo-here")}</a>}
-                        </Link>
+                        <NextLink href="/">
+                            {props.icon || t("logo-here")}
+                        </NextLink>
                     </DrawerHeader>
                     <DrawerBody>
                         <Stack

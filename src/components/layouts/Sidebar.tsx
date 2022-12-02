@@ -6,12 +6,12 @@ import {
     LinkOverlay,
     Stack,
     Text,
+    Tooltip,
     UseDisclosureProps,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
-import { Ref } from "react";
 import { IconType } from "react-icons";
-import { IoBarChart, IoBook } from "react-icons/io5";
+import { IoBarChart, IoHome } from "react-icons/io5";
 
 export default function Sidebar({
     disclosure,
@@ -31,14 +31,14 @@ export default function Sidebar({
         >
             <ItemLink
                 href="/admin"
-                text="Dashboard"
-                IconLink={IoBarChart}
+                text="Home"
+                IconLink={IoHome}
                 isOpen={disclosure.isOpen}
             />
             <ItemLink
                 href="/admin/test"
                 text="Test"
-                IconLink={IoBook}
+                IconLink={IoBarChart}
                 isOpen={disclosure.isOpen}
             />
         </Stack>
@@ -57,22 +57,30 @@ function ItemLink({
     IconLink: IconType;
 }) {
     return (
-        <LinkBox
-            h="10"
-            as={Flex}
-            alignItems="center"
-            _hover={{ background: "#C5E4F3", color: "#015884" }}
-            _active={{ background: "#C5E4F3", color: "#015884" }}
-            _activeLink={{ background: "#C5E4F3", color: "#015884" }}
+        <Tooltip
+            label={text}
+            placement="right"
+            hasArrow
+            fontSize="sm"
+            isDisabled={isOpen}
         >
-            <NextLink href={href} passHref>
-                <LinkOverlay>
-                    <HStack h="10" alignItems="center" px={4} spacing={4}>
-                        <IconLink size={18} />
-                        {isOpen && <Text>{text}</Text>}
-                    </HStack>
-                </LinkOverlay>
-            </NextLink>
-        </LinkBox>
+            <LinkBox
+                h="10"
+                as={Flex}
+                alignItems="center"
+                _hover={{ background: "#C5E4F3", color: "#015884" }}
+                _active={{ background: "#C5E4F3", color: "#015884" }}
+                _activeLink={{ background: "#C5E4F3", color: "#015884" }}
+            >
+                <NextLink href={href} passHref>
+                    <LinkOverlay>
+                        <HStack h="10" alignItems="center" px={4} spacing={4}>
+                            <IconLink size={18} />
+                            {isOpen && <Text>{text}</Text>}
+                        </HStack>
+                    </LinkOverlay>
+                </NextLink>
+            </LinkBox>
+        </Tooltip>
     );
 }

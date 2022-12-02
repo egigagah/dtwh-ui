@@ -1,5 +1,5 @@
-import { Box, Flex, HStack, Stack, Text } from "@chakra-ui/react";
-import Link from "next/link";
+import { Flex, Stack } from "@chakra-ui/react";
+import NextLink from "@components/links";
 import { LayoutsProps } from "src/utils/types";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -13,17 +13,12 @@ export default function Layout({
         <Flex
             flex={1}
             flexDirection="column"
-            bg={["white", "gray.50"]}
+            bg={["gray.50", "gray.50"]}
             minH="100vh"
         >
             {withHeader && (
                 <Header>
-                    <Link href="/dashboard">
-                        <a>Dashboard</a>
-                    </Link>
-                    <Link href="/data-persebaran">
-                        <a>Persebaran</a>
-                    </Link>
+                    <NextLink href="/dashboard">Open Data</NextLink>
                 </Header>
             )}
             <Stack
