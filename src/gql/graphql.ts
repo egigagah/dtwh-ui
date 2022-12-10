@@ -12,6 +12,12 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any;
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: any;
+  /** The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
+  Timestamp: any;
 };
 
 export type BarTable = {
@@ -34,6 +40,14 @@ export type BidangSum = {
   jumlah_izin: Scalars['Int'];
   status: Scalars['String'];
   tahun: Scalars['Int'];
+};
+
+export type CreateUsersInput = {
+  email: Scalars['String'];
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  password: Scalars['String'];
+  wilayah?: InputMaybe<Scalars['String']>;
 };
 
 export type Dashboards = {
@@ -97,6 +111,62 @@ export type LineStatus = {
   tahun: Scalars['Int'];
 };
 
+export type LinksPagination = {
+  __typename?: 'LinksPagination';
+  first?: Maybe<ParamsPagination>;
+  last?: Maybe<ParamsPagination>;
+  next?: Maybe<ParamsPagination>;
+  prev?: Maybe<ParamsPagination>;
+};
+
+export type LoginInput = {
+  email?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
+};
+
+export type MetaPagination = {
+  __typename?: 'MetaPagination';
+  currentPage: Scalars['Int'];
+  itemCount: Scalars['Int'];
+  itemsPerPage: Scalars['Int'];
+  totalItems: Scalars['Int'];
+  totalPages: Scalars['Int'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createAuth: Users;
+  login?: Maybe<Users>;
+  removeAuth: Users;
+  updateAuth: Users;
+};
+
+
+export type MutationCreateAuthArgs = {
+  createAuthInput: CreateUsersInput;
+};
+
+
+export type MutationLoginArgs = {
+  params: LoginInput;
+};
+
+
+export type MutationRemoveAuthArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type MutationUpdateAuthArgs = {
+  updateAuthInput: UpdateAuthInput;
+};
+
+export type ParamsPagination = {
+  __typename?: 'ParamsPagination';
+  limit: Scalars['Int'];
+  page: Scalars['Int'];
+};
+
 export type PieStatus = {
   __typename?: 'PieStatus';
   id_tahun?: Maybe<Scalars['Int']>;
@@ -126,6 +196,7 @@ export type Query = {
   filterTahun: Array<FilterTahun>;
   getDashboards: Dashboards;
   getFiltersDashboard: FiltersDashboard;
+  getUsers: Array<Users>;
   lineStatus: Array<LineStatus>;
   lineStatusChartAggregate: Array<LineChartAggregate>;
   lineStatusCsvAggregate: Array<LineCsvAggregate>;
@@ -133,6 +204,9 @@ export type Query = {
   pieStatus: Array<PieStatus>;
   pieStatusChartAggregat: Array<SumAggregate>;
   pieStatusOrigin: Array<PieStatusOrigin>;
+  reportDataTable: ReportTablePagination;
+  reportTable: ReportTable;
+  syncTest: Scalars['String'];
   totalIzin: Array<TotalIzin>;
   totalIzinChartAggregate: Array<SumAggregate>;
   totalIzinOrigin: Array<TotalIzin>;
@@ -194,6 +268,32 @@ export type QueryPieStatusChartAggregatArgs = {
 };
 
 
+export type QueryReportDataTableArgs = {
+  bidang?: InputMaybe<Scalars['String']>;
+  kategori?: InputMaybe<Scalars['String']>;
+  level_wilayah?: InputMaybe<Scalars['String']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  nama_izin?: InputMaybe<Scalars['String']>;
+  nama_pemohon?: InputMaybe<Scalars['String']>;
+  nama_perusahaan?: InputMaybe<Scalars['String']>;
+  nama_usaha?: InputMaybe<Scalars['String']>;
+  no_identitas_pemohon?: InputMaybe<Scalars['String']>;
+  nomor_permohonan?: InputMaybe<Scalars['String']>;
+  nomor_sk?: InputMaybe<Scalars['String']>;
+  npwp_perusahaan?: InputMaybe<Scalars['String']>;
+  page?: InputMaybe<Scalars['Int']>;
+  service_point?: InputMaybe<Scalars['String']>;
+  source_db?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<Scalars['String']>;
+  tahun?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryReportTableArgs = {
+  id: Scalars['Int'];
+};
+
+
 export type QueryTotalIzinArgs = {
   tahun?: InputMaybe<Array<Scalars['Int']>>;
 };
@@ -202,6 +302,52 @@ export type QueryTotalIzinArgs = {
 export type QueryTotalIzinChartAggregateArgs = {
   tahun?: InputMaybe<Array<Scalars['Int']>>;
 };
+
+export type ReportTable = {
+  __typename?: 'ReportTable';
+  alamat_izin: Scalars['String'];
+  alamat_pemohon: Scalars['String'];
+  alamat_perusahaan: Scalars['String'];
+  bidang: Scalars['String'];
+  bulan: Scalars['String'];
+  data_teknis?: Maybe<Scalars['JSON']>;
+  id: Scalars['Int'];
+  kategori: Scalars['String'];
+  kode_wilayah_izin: Scalars['String'];
+  koordinat_izin: Scalars['String'];
+  level_wilayah: Scalars['String'];
+  nama_izin: Scalars['String'];
+  nama_pemohon: Scalars['String'];
+  nama_perusahaan: Scalars['String'];
+  nama_usaha: Scalars['String'];
+  no_identitas_pemohon: Scalars['String'];
+  nomor_permohonan: Scalars['String'];
+  nomor_sk: Scalars['String'];
+  npwp_perusahaan: Scalars['String'];
+  service_point: Scalars['String'];
+  source_db: Scalars['String'];
+  status: Scalars['String'];
+  tahun: Scalars['String'];
+  tgl_akhir_berlaku?: Maybe<Scalars['String']>;
+  tgl_pengajuan?: Maybe<Scalars['Timestamp']>;
+  tgl_terbit_izin?: Maybe<Scalars['String']>;
+  tipe_pengajuan: Scalars['String'];
+  tipe_perizinan: Scalars['String'];
+  zonasi: Scalars['String'];
+};
+
+export type ReportTablePagination = {
+  __typename?: 'ReportTablePagination';
+  items: Array<ReportTable>;
+  links: LinksPagination;
+  meta: MetaPagination;
+};
+
+export enum Roles {
+  Admin = 'Admin',
+  Backoffice = 'Backoffice',
+  Integrator = 'Integrator'
+}
 
 export type StatusGroupAggregate = {
   __typename?: 'StatusGroupAggregate';
@@ -222,6 +368,23 @@ export type TotalIzin = {
   id_tahun?: Maybe<Scalars['Int']>;
   jumlah_izin?: Maybe<Scalars['Int']>;
   tahun?: Maybe<Scalars['Int']>;
+};
+
+export type UpdateAuthInput = {
+  /** Example field (placeholder) */
+  exampleField?: InputMaybe<Scalars['Int']>;
+  id: Scalars['Int'];
+};
+
+export type Users = {
+  __typename?: 'Users';
+  access_token: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  email: Scalars['String'];
+  name: Scalars['String'];
+  roles?: Maybe<Array<Roles>>;
+  updatedAt: Scalars['DateTime'];
+  wilayah: Scalars['String'];
 };
 
 export type GetDashboardsQueryVariables = Exact<{

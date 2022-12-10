@@ -41,6 +41,12 @@ export default function Sidebar({
                 IconLink={IoBarChart}
                 isOpen={disclosure.isOpen}
             />
+            <ItemLink
+                href="/admin/report-table"
+                text="Report"
+                IconLink={IoBarChart}
+                isOpen={disclosure.isOpen}
+            />
         </Stack>
     );
 }
