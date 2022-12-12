@@ -3,6 +3,7 @@ import {
     Button,
     Flex,
     HStack,
+    IconButton,
     Select,
     Stack,
     Table,
@@ -16,7 +17,8 @@ import {
     Tr,
 } from "@chakra-ui/react";
 import { useEffect, useMemo, useReducer, useState } from "react";
-import { AiFillCaretDown, AiFillCaretUp } from "react-icons/ai";
+import { AiFillCaretDown, AiFillCaretUp, AiFillFilter } from "react-icons/ai";
+import { FaFilter } from "react-icons/fa";
 import {
     ColumnDef,
     flexRender,
@@ -48,7 +50,7 @@ export default function DataTable({
     searchParams,
 }: DataTableProps) {
     const rerender = useReducer(() => ({}), {})[1];
-
+    const [searchIsOpen, setSearchIsOpen] = useState(false);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [pagination, setPagination] = useState<PaginationState>({
@@ -61,11 +63,25 @@ export default function DataTable({
             searchParams[item] =
                 columnFilters.find((d) => d.id === item)?.value ?? "";
         });
-        console.log(columnFilters, "columnFilters");
+        const sortParams = sorting.map((item) => {
+            const obj = {
+                sortField: item.id,
+                sortType: item.desc ? "DESC" : "ASC",
+            };
+            return obj;
+        });
+        console.log(
+            columnFilters,
+            sorting,
+            sorting[0],
+            sortParams[0],
+            "columnFilters",
+        );
         return {
             limit: pagination.pageSize,
             page: pagination.pageIndex + 1,
             ...searchParams,
+            ...sortParams[0],
         };
     }, [sorting, pagination, columnFilters]);
 
@@ -97,12 +113,13 @@ export default function DataTable({
             flex={1}
             w="full"
             gap={8}
-            py={8}
+            pb={8}
             bg="white"
             rounded="xl"
+            shadow="sm"
         >
             <TableContainer w="full">
-                <Table variant="simple" width={table.getCenterTotalSize()}>
+                <Table variant="simple" width="full">
                     <Thead>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <Tr key={headerGroup.id}>
@@ -115,60 +132,86 @@ export default function DataTable({
                                         >
                                             <Stack
                                                 gap={2}
-                                                // w={
-                                                //     header.getSize() ||
-                                                //     "max-content"
-                                                // }
+                                                py={2}
+                                                w={
+                                                    header.getSize() ||
+                                                    "min-content"
+                                                }
                                             >
-                                                {header.isPlaceholder ? null : (
-                                                    <Flex
-                                                        alignItems="center"
-                                                        gap={2}
-                                                        _hover={{
-                                                            cursor: "pointer",
-                                                        }}
-                                                        {...{
-                                                            className:
-                                                                header.column.getCanSort()
-                                                                    ? "cursor-pointer select-none"
-                                                                    : "",
-                                                            onClick:
-                                                                header.column.getToggleSortingHandler(),
-                                                        }}
-                                                    >
-                                                        <Text
-                                                            fontSize="lg"
-                                                            mb="0"
+                                                <HStack justifyContent="space-between">
+                                                    {header.isPlaceholder ? null : (
+                                                        <Flex
+                                                            alignItems="center"
+                                                            gap={2}
+                                                            _hover={{
+                                                                cursor: "pointer",
+                                                            }}
+                                                            {...{
+                                                                className:
+                                                                    header.column.getCanSort()
+                                                                        ? "cursor-pointer select-none"
+                                                                        : "",
+                                                                onClick:
+                                                                    header.column.getToggleSortingHandler(),
+                                                            }}
                                                         >
-                                                            {flexRender(
-                                                                header.column
-                                                                    .columnDef
-                                                                    .header,
-                                                                header.getContext(),
-                                                            )}
-                                                        </Text>
-                                                        {{
-                                                            asc: (
-                                                                <AiFillCaretUp />
-                                                            ),
-                                                            desc: (
-                                                                <AiFillCaretDown />
-                                                            ),
-                                                        }[
-                                                            header.column.getIsSorted() as string
-                                                        ] ?? null}
-                                                    </Flex>
-                                                )}
-                                                {header.column.getCanFilter() ? (
-                                                    <Box maxW={["full", "80"]}>
-                                                        <Filter
-                                                            column={
-                                                                header.column
+                                                            <Text
+                                                                fontSize="lg"
+                                                                mb="0"
+                                                            >
+                                                                {flexRender(
+                                                                    header
+                                                                        .column
+                                                                        .columnDef
+                                                                        .header,
+                                                                    header.getContext(),
+                                                                )}
+                                                            </Text>
+                                                            {{
+                                                                asc: (
+                                                                    <AiFillCaretUp
+                                                                        size={
+                                                                            15
+                                                                        }
+                                                                    />
+                                                                ),
+                                                                desc: (
+                                                                    <AiFillCaretDown
+                                                                        size={
+                                                                            15
+                                                                        }
+                                                                    />
+                                                                ),
+                                                            }[
+                                                                header.column.getIsSorted() as string
+                                                            ] ?? null}
+                                                        </Flex>
+                                                    )}
+                                                    {header.column.getCanFilter() && (
+                                                        <IconButton
+                                                            aria-label="search"
+                                                            icon={<FaFilter />}
+                                                            variant="link"
+                                                            onClick={() =>
+                                                                setSearchIsOpen(
+                                                                    !searchIsOpen,
+                                                                )
                                                             }
-                                                            table={table}
                                                         />
-                                                    </Box>
-                                                ) : null}
+                                                    )}
+                                                </HStack>
+                                                <Box
+                                                    maxW={["full", "80"]}
+                                                    hidden={searchIsOpen}
+                                                >
+                                                    <Filter
+                                                        column={header.column}
+                                                        table={table}
+                                                        isDisabled={
+                                                            !header.column.getCanFilter()
+                                                        }
+                                                    />
+                                                </Box>
                                             </Stack>
                                         </Th>
                                     );
@@ -185,14 +228,16 @@ export default function DataTable({
                                             <Td
                                                 key={cell.id}
                                                 borderRight="1px solid #edf2f7"
+                                                p={2}
                                             >
-                                                <Text
-                                                    noOfLines={2}
-                                                    mb="0"
-                                                    // w={
-                                                    //     cell.column.getSize() ||
-                                                    //     "max-content"
-                                                    // }
+                                                <Box
+                                                    overflowWrap="break-word"
+                                                    whiteSpace="normal"
+                                                    wordBreak="break-word"
+                                                    w={
+                                                        cell.column.getSize() ||
+                                                        "min-content"
+                                                    }
                                                     overflowX="clip"
                                                 >
                                                     {flexRender(
@@ -200,7 +245,7 @@ export default function DataTable({
                                                             .cell,
                                                         cell.getContext(),
                                                     )}
-                                                </Text>
+                                                </Box>
                                             </Td>
                                         );
                                     })}

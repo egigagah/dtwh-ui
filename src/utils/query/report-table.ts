@@ -27,6 +27,8 @@ export type ReportSearchDataArgs = {
     nama_perusahaan?: string;
     nama_usaha?: string;
     nomor_sk?: string;
+    sortType?: string;
+    sortField?: string;
 };
 export type ReportFilterArgs = ReportSearchDataArgs & PaginationsArgs;
 
@@ -40,6 +42,7 @@ export async function getReportTableDatas(params: ReportFilterArgs) {
 }
 
 export function useReportTable(params: ReportFilterArgs) {
+    console.log(params, "--- query");
     return useQuery(
         [cacheName, JSON.stringify(params)],
         async () => await getReportTableDatas(params),
