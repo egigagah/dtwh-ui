@@ -27,16 +27,18 @@ export type ReportSearchDataArgs = {
     nama_perusahaan?: string;
     nama_usaha?: string;
     nomor_sk?: string;
+    sortType?: string;
+    sortField?: string;
 };
 export type ReportFilterArgs = ReportSearchDataArgs & PaginationsArgs;
 
 export async function getReportTableDatas(params: ReportFilterArgs) {
-    console.log(params, "--- query");
-    const data = await useGraphql.request<QueryReportTableAll>(
-        ReportTableQuery,
-        { ...params },
-    );
-    return data.reportDataTable;
+    return await useGraphql
+        .request<QueryReportTableAll>(ReportTableQuery, {
+            ...params,
+        })
+        .then((d) => d.reportDataTable);
+    // return data.reportDataTable;
 }
 
 export function useReportTable(params: ReportFilterArgs) {

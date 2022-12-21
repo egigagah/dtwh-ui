@@ -65,18 +65,25 @@ export default function Header({
                     </NextLink>
                 )}
                 {!session && <NextLink href="/login">{t("signin")}</NextLink>}
-                <Divider
-                    display={["none", "block"]}
-                    orientation="vertical"
-                    h="25px"
-                />
-                <Divider display={["block", "none"]} orientation="horizontal" />
-                <Language
-                    listItem={route?.locales || []}
-                    onToggleLang={onToggleLanguageClick}
-                    translation={t}
-                    value={route.locale}
-                />
+                {!session && (
+                    <>
+                        <Divider
+                            display={["none", "block"]}
+                            orientation="vertical"
+                            h="25px"
+                        />
+                        <Divider
+                            display={["block", "none"]}
+                            orientation="horizontal"
+                        />
+                        <Language
+                            listItem={route?.locales || []}
+                            onToggleLang={onToggleLanguageClick}
+                            translation={t}
+                            value={route.locale}
+                        />
+                    </>
+                )}
             </>
         );
     };
@@ -111,7 +118,9 @@ export default function Header({
                         mr={4}
                     />
                 )}
-                <NextLink href="/">{icon || t("logo-here")}</NextLink>
+                <NextLink href={session ? "/admin" : "/"}>
+                    {icon || t("logo-here")}
+                </NextLink>
             </Box>
             <HStack spacing={4} display={["none", "flex"]}>
                 <Menus />

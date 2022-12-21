@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Flex, Heading, HStack, Stack } from "@chakra-ui/react";
+import { Badge, Flex, Heading, HStack, Stack } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -51,20 +51,97 @@ const App: CustomAppElement = () => {
     const columns = useMemo<ColumnDef<ReportTable>[]>(
         () => [
             {
+                header: "Nama Usaha",
+                accessorKey: "nama_usaha",
+                size: 96,
+            },
+            {
                 header: "Perusahaan",
                 accessorKey: "nama_perusahaan",
-                enableResizing: true,
                 size: 96,
             },
             {
                 header: "Npwp",
                 accessorKey: "npwp_perusahaan",
-                enableResizing: true,
+            },
+            {
+                header: "Izin",
+                accessorKey: "nama_izin",
+                size: 96,
+            },
+            {
+                header: "Tanggal",
+                accessorKey: "tgl_terbit_izin",
+                enableColumnFilter: false,
+            },
+            {
+                header: "status",
+                accessorKey: "status",
+                cell: ({ cell }) => {
+                    return (
+                        <Badge
+                            key={cell.id}
+                            colorScheme={
+                                (cell.getValue() as string) === "selesai"
+                                    ? "whatsapp"
+                                    : "red"
+                            }
+                        >
+                            {cell.getValue() as string}
+                        </Badge>
+                    );
+                },
             },
             {
                 header: "SK",
                 accessorKey: "nomor_sk",
-                enableResizing: true,
+                size: 80,
+            },
+            {
+                header: "Tipe Izin",
+                accessorKey: "tipe_perizinan",
+            },
+            {
+                header: "Permohonan",
+                accessorKey: "tipe_pengajuan",
+            },
+            {
+                header: "Bidang ",
+                accessorKey: "bidang",
+            },
+            {
+                header: "Kategori",
+                accessorKey: "kategori",
+            },
+            {
+                header: "Level",
+                accessorKey: "level_wilayah",
+            },
+            {
+                header: "Service Point",
+                accessorKey: "service_point",
+                size: 64,
+            },
+            {
+                header: "Source",
+                accessorKey: "source_db",
+                cell: ({ cell }) => {
+                    const colorScheme: Record<string, string> = {
+                        jakevo: "orange",
+                        pelayanan: "linkedin",
+                        oss_jakevo: "purple",
+                        sosial: "green",
+                    };
+                    const data = cell.getValue() as string;
+                    return (
+                        <Badge
+                            key={cell.id}
+                            colorScheme={colorScheme[data] || "gray"}
+                        >
+                            {data}
+                        </Badge>
+                    );
+                },
             },
         ],
         [],

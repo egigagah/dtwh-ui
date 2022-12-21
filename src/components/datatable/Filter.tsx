@@ -12,9 +12,11 @@ import { AiFillCloseCircle } from "react-icons/ai";
 export default function Filter({
     column,
     table,
+    isDisabled,
 }: {
     column: Column<any, any>;
     table: Table<any>;
+    isDisabled: boolean;
 }) {
     const [state, setState] = useState("");
     const firstValue = table
@@ -65,6 +67,7 @@ export default function Filter({
                 onBlur={() => column.setFilterValue(state)}
                 placeholder={`Search...`}
                 className="w-36 border shadow rounded"
+                disabled={isDisabled}
             />
             {state && (
                 <InputRightElement>

@@ -19,6 +19,8 @@ export const ReportTableQuery = gql`
         $source_db: String
         $status: String
         $tahun: String
+        $sortField: String
+        $sortType: String
     ) {
         reportDataTable(
             page: $page
@@ -38,6 +40,8 @@ export const ReportTableQuery = gql`
             source_db: $source_db
             status: $status
             tahun: $tahun
+            sortField: $sortField
+            sortType: $sortType
         ) {
             items {
                 id

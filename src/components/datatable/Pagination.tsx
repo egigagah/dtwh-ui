@@ -5,6 +5,7 @@ export default function Pagination({ table }: { table: Table<any> }) {
     return (
         <HStack alignItems="center" justifyContent="flex-end" gap={8} px={4}>
             <HStack alignItems="center">
+                {/* <Text mb={0}>Page: </Text> */}
                 <Button
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
@@ -18,7 +19,6 @@ export default function Pagination({ table }: { table: Table<any> }) {
                             {table.getPageCount()}
                         </strong>
                     </Text>
-                    <Text mb={0}>Page</Text>
                 </HStack>
                 <Button
                     onClick={() => table.nextPage()}
