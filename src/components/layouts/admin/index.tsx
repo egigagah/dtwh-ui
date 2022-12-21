@@ -1,12 +1,6 @@
-import {
-    Box,
-    Flex,
-    HStack,
-    Stack,
-    Text,
-    useDisclosure,
-} from "@chakra-ui/react";
-import Link from "next/link";
+import { Flex, HStack, Stack, useDisclosure } from "@chakra-ui/react";
+import NextLink from "@components/links";
+import { useTranslation } from "next-i18next";
 import { useRef } from "react";
 import { LayoutsProps } from "src/utils/types";
 import Footer from "../Footer";
@@ -18,6 +12,7 @@ export default function AdminLayout({
     withHeader = true,
     withFooter = true,
 }: LayoutsProps): JSX.Element {
+    const { t } = useTranslation();
     const btnMenuRef = useRef();
     const disclosure = useDisclosure();
     return (
@@ -30,12 +25,7 @@ export default function AdminLayout({
         >
             {withHeader && (
                 <Header btnMenuRef={btnMenuRef} disclosure={disclosure}>
-                    <Link href="/dashboard">
-                        <a>Dashboard</a>
-                    </Link>
-                    <Link href="/data-persebaran">
-                        <a>Persebaran</a>
-                    </Link>
+                    <NextLink href="/dashboard">{t("Dashboard")}</NextLink>
                 </Header>
             )}
             <HStack

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Flex, Heading, HStack, Stack } from "@chakra-ui/react";
+import { Badge, Flex, Heading, HStack, Stack } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
@@ -77,6 +77,20 @@ const App: CustomAppElement = () => {
             {
                 header: "status",
                 accessorKey: "status",
+                cell: ({ cell }) => {
+                    return (
+                        <Badge
+                            key={cell.id}
+                            colorScheme={
+                                (cell.getValue() as string) === "selesai"
+                                    ? "whatsapp"
+                                    : "red"
+                            }
+                        >
+                            {cell.getValue() as string}
+                        </Badge>
+                    );
+                },
             },
             {
                 header: "SK",
@@ -111,6 +125,23 @@ const App: CustomAppElement = () => {
             {
                 header: "Source",
                 accessorKey: "source_db",
+                cell: ({ cell }) => {
+                    const colorScheme: Record<string, string> = {
+                        jakevo: "orange",
+                        pelayanan: "linkedin",
+                        oss_jakevo: "purple",
+                        sosial: "green",
+                    };
+                    const data = cell.getValue() as string;
+                    return (
+                        <Badge
+                            key={cell.id}
+                            colorScheme={colorScheme[data] || "gray"}
+                        >
+                            {data}
+                        </Badge>
+                    );
+                },
             },
         ],
         [],

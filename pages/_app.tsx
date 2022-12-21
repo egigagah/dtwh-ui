@@ -14,6 +14,8 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { SessionProvider, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import ProtectedRoute from "@components/layouts/ProtectedRoute";
 
 function MyApp({
     Component,
@@ -23,6 +25,12 @@ function MyApp({
     const [componentState, setCompononentState] = useState<
         CustomAppProps | undefined
     >(undefined as any);
+    const router = useRouter();
+
+    useEffect(() => {
+        console.log(session, pageProps, "----");
+        // if (status === "authenticated") router.push("/admin");
+    }, [session, pageProps]);
 
     // const { ToastContainer } = createStandaloneToast();
 
@@ -42,9 +50,11 @@ function MyApp({
                     <QueryClientProvider client={queryClient}>
                         <ReactQueryDevtools initialIsOpen={false} />
                         <Hydrate state={pageProps.dehydratedState}>
-                            <Layout {...componentState?.Layout}>
-                                <Component {...pageProps} />
-                            </Layout>
+                            <ProtectedRoute protectedRoutes={[]}>
+                                <Layout {...componentState?.Layout}>
+                                    <Component {...pageProps} />
+                                </Layout>
+                            </ProtectedRoute>
                         </Hydrate>
                     </QueryClientProvider>
                 </ChakraProvider>

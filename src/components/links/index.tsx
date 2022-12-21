@@ -7,8 +7,9 @@ export default function NextLink(props: LinkProps) {
         <NextLinkOri href={props.href as unknown as Url}>
             <Link
                 {...props}
+                color="blackAlpha.700"
                 _hover={{
-                    color: "#385898",
+                    color: "black",
                     dropShadow: "lg",
                 }}
             >

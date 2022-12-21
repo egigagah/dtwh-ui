@@ -33,16 +33,15 @@ export type ReportSearchDataArgs = {
 export type ReportFilterArgs = ReportSearchDataArgs & PaginationsArgs;
 
 export async function getReportTableDatas(params: ReportFilterArgs) {
-    console.log(params, "--- query");
-    const data = await useGraphql.request<QueryReportTableAll>(
-        ReportTableQuery,
-        { ...params },
-    );
-    return data.reportDataTable;
+    return await useGraphql
+        .request<QueryReportTableAll>(ReportTableQuery, {
+            ...params,
+        })
+        .then((d) => d.reportDataTable);
+    // return data.reportDataTable;
 }
 
 export function useReportTable(params: ReportFilterArgs) {
-    console.log(params, "--- query");
     return useQuery(
         [cacheName, JSON.stringify(params)],
         async () => await getReportTableDatas(params),
