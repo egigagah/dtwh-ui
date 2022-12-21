@@ -1,47 +1,48 @@
 import {
+    Box,
     BoxProps,
     Flex,
     HStack,
     Skeleton,
     SkeletonProps,
+    Text,
 } from "@chakra-ui/react";
+import Skeletons from "@components/skeletons";
 import { ResponsiveBar } from "@nivo/bar";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 
 interface BarProps extends BoxProps {
     data: any;
+    dataKey: any[];
+    dataIndexBy: string;
+    isLoading?: boolean;
 }
 
-const App = ({ data }: BarProps): JSX.Element => {
-    const [isLoaded, setLoaded] = useState(false);
-
-    useEffect(() => {
-        setLoaded(true);
-    }, []);
-
+const App = ({
+    data,
+    dataKey,
+    dataIndexBy,
+    isLoading = false,
+}: BarProps): JSX.Element => {
     return (
         <>
-            {!isLoaded && (
-                <BarSkeleton isLoaded={isLoaded} width="2rem" height="80%" />
-            )}
-            {isLoaded && (
+            {/* <BarSkeleton isLoaded={isLoading} width="2rem" height="80%" /> */}
+            {isLoading && <Skeletons.BarSkeleton />}
+            {!isLoading && (
                 <ResponsiveBar
                     data={data}
-                    keys={[
-                        "hot dog",
-                        "burger",
-                        "sandwich",
-                        "kebab",
-                        "fries",
-                        "donut",
-                    ]}
-                    indexBy="country"
+                    keys={dataKey}
+                    enableLabel={false}
+                    // label={(d) => `${d.value}`}
+                    // layout="horizontal"
+                    indexBy={dataIndexBy}
+                    valueFormat={(d) => `${d} val`}
                     margin={{ top: 50, right: 25, bottom: 50, left: 60 }}
                     padding={0.3}
                     groupMode="grouped"
                     valueScale={{ type: "linear" }}
                     indexScale={{ type: "band", round: true }}
-                    colors={{ scheme: "nivo" }}
+                    colors={{ scheme: "category10" }}
                     defs={[
                         {
                             id: "dots",
@@ -56,7 +57,7 @@ const App = ({ data }: BarProps): JSX.Element => {
                             id: "lines",
                             type: "patternLines",
                             background: "inherit",
-                            color: "#eed312",
+                            color: "rgba(255, 255, 255, 0.3)",
                             rotation: -45,
                             lineWidth: 6,
                             spacing: 10,
@@ -65,15 +66,9 @@ const App = ({ data }: BarProps): JSX.Element => {
                     fill={[
                         {
                             match: {
-                                id: "fries",
+                                id: "ditolak",
                             },
                             id: "dots",
-                        },
-                        {
-                            match: {
-                                id: "sandwich",
-                            },
-                            id: "lines",
                         },
                     ]}
                     borderColor={{
@@ -85,25 +80,55 @@ const App = ({ data }: BarProps): JSX.Element => {
                     axisBottom={{
                         tickSize: 5,
                         tickPadding: 5,
-                        tickRotation: 0,
-                        legend: "country",
-                        legendPosition: "middle",
-                        legendOffset: 32,
+                        tickRotation: -56,
+                        format: (d) => `${d}`,
+                        // legend: "Kategori",
+                        // legendPosition: "middle",
+                        // legendOffset: 32,
                     }}
                     axisLeft={{
                         tickSize: 5,
                         tickPadding: 5,
                         tickRotation: 0,
-                        legend: "food",
+                        legend: "Jumlah Izin",
                         legendPosition: "middle",
                         legendOffset: -40,
                     }}
                     labelSkipWidth={12}
                     labelSkipHeight={12}
-                    labelTextColor={{
-                        from: "color",
-                        modifiers: [["darker", 1.6]],
-                    }}
+                    labelTextColor="#FFFFFF"
+                    // tooltipLabel={(d) =>
+                    //     `${d.indexValue} - ${d.id.toString().toUpperCase()}`
+                    // }
+                    tooltip={(d) => (
+                        <Box
+                            w="44"
+                            h="fit-content"
+                            bg="white"
+                            shadow="md"
+                            p={2}
+                            rounded="lg"
+                            border=".3px solid grey"
+                        >
+                            <Text fontSize="xs" mb={0}>
+                                {d.data.kode}
+                            </Text>
+                            <Text fontSize="xs" mb={1} fontWeight="semibold">
+                                {d.indexValue}
+                            </Text>
+                            <Text fontSize="xs" mb={0}>
+                                {d.id.toString().toUpperCase()}:{" "}
+                                <span style={{ fontWeight: "bold" }}>
+                                    {d.value}
+                                </span>
+                            </Text>
+                        </Box>
+                    )}
+                    // tooltipLabel={(d) =>
+                    //     `${d.id} ${
+                    //         d.indexValue.toString().match(/\(.*\)/g)?.[0] || "-"
+                    //     }`
+                    // }
                     // legends={[
                     //     {
                     //         dataFrom: "keys",
@@ -129,13 +154,13 @@ const App = ({ data }: BarProps): JSX.Element => {
                     //     },
                     // ]}
                     role="application"
-                    ariaLabel="Nivo bar chart demo"
+                    ariaLabel="Bar chart"
                     barAriaLabel={function (e) {
                         return (
                             e.id +
                             ": " +
                             e.formattedValue +
-                            " in country: " +
+                            " Total: " +
                             e.indexValue
                         );
                     }}
@@ -145,32 +170,6 @@ const App = ({ data }: BarProps): JSX.Element => {
     );
 };
 
-const Bar = memo(
-    App,
-    (prevProp, nextProp) => prevProp.data !== nextProp.datatype,
-);
+const Bar = memo(App, (prevProp, nextProp) => prevProp.data === nextProp.data);
 
 export default Bar;
-
-function BarSkeleton({ ...res }: SkeletonProps): JSX.Element {
-    return (
-        <HStack
-            spacing={4}
-            p={[4, 8]}
-            justifyContent="center"
-            alignItems="center"
-            as={Flex}
-            flex={1}
-            w="100%"
-            h="100%"
-            display={res.isLoaded ? "none" : "flex"}
-        >
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-            <Skeleton {...res} />
-        </HStack>
-    );
-}

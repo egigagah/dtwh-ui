@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Heading,
@@ -6,8 +6,6 @@ import {
     Flex,
     Divider,
     HStack,
-    MenuItem,
-    useDisclosure,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -15,18 +13,26 @@ import {
     ModalCloseButton,
     ModalBody,
     ModalFooter,
-    ModalProps,
     Code,
-    Button,
 } from "@chakra-ui/react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import ChartMenus from "./Menus";
 
 interface CardsProps extends BoxProps {
     title: string;
+    fileName?: string;
+    dataCollection?: any[];
+    bodyH?: number | string;
 }
 
-export const Cards = ({ title, children, ...res }: CardsProps): JSX.Element => {
+export const Cards = ({
+    title,
+    children,
+    dataCollection,
+    fileName,
+    bodyH,
+    ...res
+}: CardsProps): JSX.Element => {
     const [modalEmbedShow, setModalEmbedShow] = useState(false);
     const isFullScreen = useFullScreenHandle();
 
@@ -41,6 +47,7 @@ export const Cards = ({ title, children, ...res }: CardsProps): JSX.Element => {
             borderWidth={res?.borderWidth || "1px"}
             borderStyle={res?.borderStyle || "solid"}
             borderColor={res?.borderColor || "gray.200"}
+            bg="white"
         >
             <HStack
                 justifyContent="space-between"
@@ -54,11 +61,13 @@ export const Cards = ({ title, children, ...res }: CardsProps): JSX.Element => {
                 </Heading>
                 <ChartMenus
                     setModalEmbedShow={() => setModalEmbedShow(!modalEmbedShow)}
+                    dataCollections={dataCollection}
+                    fileName={`${fileName || title}.csv`}
                 />
             </HStack>
             <Divider />
             <FullScreen handle={isFullScreen} className="fullscreen-el">
-                <Flex flex={1} h="80%">
+                <Flex flex={1} h={bodyH || "80%"}>
                     {children}
                 </Flex>
             </FullScreen>

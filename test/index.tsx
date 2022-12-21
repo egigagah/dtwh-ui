@@ -7,7 +7,7 @@ import {
 
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "@definitions/chakra/theme";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 /**
  * Custom renderer example with @testing-library/react

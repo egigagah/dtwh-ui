@@ -1,52 +1,65 @@
-import React from "react";
-import {
-    Divider,
-    Flex,
-    Heading,
-    SimpleGrid,
-    Stack,
-    Text,
-} from "@chakra-ui/react";
+import React, { useMemo, useState } from "react";
+import { Flex, Stack, Text } from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
-import Pie from "@components/charts/Pie";
-import { Cards } from "@components/cards";
-import Charts from "@components/charts";
-import { dataBar, dataPie } from "src/utils/datas/charts";
+import { useSession } from "next-auth/react";
+import { CustomAppElement } from "src/utils/types";
+import Image from "next/image";
 
-const Home: React.FC = () => {
+const defaultData = {
+    status: {
+        value: "ALL",
+        label: "ALL",
+    },
+    tahun: [
+        {
+            value: -1,
+            label: "ALL",
+        },
+    ],
+};
+
+const App: CustomAppElement = () => {
     return (
-        <Flex direction="column" minH="100vh" px={[2, 8, 16]}>
+        <Flex direction="column" h="full" px={[2, 8, 16]} bg="white">
             <Stack
+                direction={["column", "row"]}
+                w="full"
                 as={Flex}
-                spacing={4}
-                w={["full", "full", "full", "75%", "50%"]}
-                py={8}
-                flexDirection="column"
+                // flex={1}
+                h="80vh"
+                justifyContent="center"
+                alignItems="center"
             >
-                <Heading fontSize={["xl", "2xl", "3xl"]}>
-                    Dashboard Perizinan
-                </Heading>
-                <Text fontSize="sm" color="gray.500">
-                    Data ini bersifat open data, dan bersumber dari Data
-                    Warehouse PTSP, yang merupakan kumpulan dari data Sosial,
-                    Pelayanan, Jakevo. <br />
-                </Text>
+                <Flex flex={2} w="full" textAlign="center" direction="column">
+                    <Text
+                        fontSize={["xl", "3xl", "4xl", "5xl", "6xl"]}
+                        m={0}
+                        fontWeight="extrabold"
+                        lineHeight="none"
+                    >
+                        Data Warehouse and Dashboard Analytics
+                    </Text>
+                </Flex>
+                <Flex flex={3} w="full" h="600" position="relative">
+                    <Image
+                        layout="fill"
+                        objectFit="contain"
+                        src="/images/main-screen.png"
+                        alt="dashboard-1"
+                        quality={100}
+                    />
+                    <Image
+                        layout="fixed"
+                        objectPosition="right bottom"
+                        width={300}
+                        height={200}
+                        src="/images/screen-01.png"
+                        alt="dashboard-2"
+                        quality={100}
+                    />
+                </Flex>
             </Stack>
-            <SimpleGrid columns={[1, 2, 2, 2, 3]} spacing={8} pb={[8, 16]}>
-                <Cards title="Data xxx">
-                    <Charts.Pie data={dataPie} />
-                </Cards>
-                <Cards title="Data xxx">
-                    <Charts.Bar data={dataBar} />
-                </Cards>
-                <Cards title="Data xxx">
-                    <Pie data={dataPie} />
-                </Cards>
-                <Cards title="Data xxx">
-                    <Pie data={dataPie} />
-                </Cards>
-            </SimpleGrid>
         </Flex>
     );
 };
@@ -55,9 +68,16 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     return {
         props: {
             ...(await getServerSideTranslations(locale as string, ["common"])),
-            data: [],
         },
     };
 };
 
-export default Home;
+App.appProps = {
+    Layout: {
+        withHeader: true,
+        withFooter: true,
+        adminLayout: false,
+    },
+};
+
+export default App;

@@ -6,25 +6,27 @@ import {
     Stack,
     StackProps,
     useBreakpoint,
-    useSafeLayoutEffect,
 } from "@chakra-ui/react";
 import { ResponsivePie } from "@nivo/pie";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useRef } from "react";
 import { useSize } from "@chakra-ui/react-use-size";
+import Skeletons from "@components/skeletons";
 
 interface PieProps extends StackProps {
     data: any;
+    total: number;
+    isLoading?: boolean;
 }
 
-const App = ({ data, ...res }: PieProps): JSX.Element => {
-    const [isLoaded, setLoaded] = useState(false);
+const App = ({
+    data,
+    total,
+    isLoading = true,
+    ...res
+}: PieProps): JSX.Element => {
     const ref = useRef<HTMLDivElement | null>(null);
     const dimension = useSize(ref);
     const breakpoint = useBreakpoint();
-
-    useEffect(() => {
-        if (ref && dimension && breakpoint) setLoaded(true);
-    }, [ref, dimension, breakpoint]);
 
     return (
         <Stack
@@ -37,12 +39,15 @@ const App = ({ data, ...res }: PieProps): JSX.Element => {
             alignItems="center"
             spacing={4}
         >
-            {!isLoaded && dimension && (
-                <SkeletonPie isLoaded={isLoaded} dimension={dimension} />
+            {isLoading && dimension && (
+                <Skeletons.PieSkeleton dimension={dimension} />
+                // <SkeletonPie isLoaded={isLoading} dimension={dimension} />
             )}
-            {dimension && isLoaded && (
+            {dimension && data && !isLoading && (
                 <ResponsivePie
                     data={data}
+                    id="label"
+                    arcLabel={(d) => `${((d.value / total) * 100).toFixed(2)}%`}
                     margin={{
                         top:
                             (dimension?.height *
@@ -52,10 +57,7 @@ const App = ({ data, ...res }: PieProps): JSX.Element => {
                             breakpoint !== "sm"
                                 ? (dimension?.height * 10) / 100
                                 : 0,
-                        bottom:
-                            (dimension?.height *
-                                (breakpoint !== "sm" ? 15 : 8)) /
-                            100,
+                        bottom: (dimension?.height * 8) / 100,
                         left:
                             breakpoint !== "sm"
                                 ? (dimension?.height * 10) / 100
@@ -66,6 +68,8 @@ const App = ({ data, ...res }: PieProps): JSX.Element => {
                     cornerRadius={3}
                     activeOuterRadiusOffset={8}
                     borderWidth={1}
+                    colors={{ scheme: "set1" }}
+                    arcLinkLabelsTextColor="#ffffff"
                     borderColor={{
                         from: "color",
                         modifiers: [["darker", 0.2]],
@@ -75,91 +79,38 @@ const App = ({ data, ...res }: PieProps): JSX.Element => {
                     // arcLinkLabelsTextColor="#333333"
                     // arcLinkLabelsThickness={2}
                     // arcLinkLabelsColor={{ from: "color" }}
+                    sortByValue={true}
                     arcLabelsSkipAngle={10}
-                    arcLabelsTextColor={{
-                        from: "color",
-                        modifiers: [["darker", 2]],
-                    }}
-                    // defs={[
-                    //     {
-                    //         id: "dots",
-                    //         type: "patternDots",
-                    //         background: "inherit",
-                    //         color: "rgba(255, 255, 255, 0.3)",
-                    //         size: 4,
-                    //         padding: 1,
-                    //         stagger: true,
-                    //     },
-                    //     {
-                    //         id: "lines",
-                    //         type: "patternLines",
-                    //         background: "inherit",
-                    //         color: "rgba(255, 255, 255, 0.3)",
-                    //         rotation: -45,
-                    //         lineWidth: 6,
-                    //         spacing: 10,
-                    //     },
-                    // ]}
-                    // fill={[
-                    //     {
-                    //         match: {
-                    //             id: "ruby",
-                    //         },
-                    //         id: "dots",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "c",
-                    //         },
-                    //         id: "dots",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "go",
-                    //         },
-                    //         id: "dots",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "python",
-                    //         },
-                    //         id: "dots",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "scala",
-                    //         },
-                    //         id: "lines",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "lisp",
-                    //         },
-                    //         id: "lines",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "elixir",
-                    //         },
-                    //         id: "lines",
-                    //     },
-                    //     {
-                    //         match: {
-                    //             id: "javascript",
-                    //         },
-                    //         id: "lines",
-                    //     },
-                    // ]}
+                    arcLabelsTextColor="#ffffff"
+                    defs={[
+                        {
+                            id: "dots",
+                            background: "inherit",
+                            color: "rgba(255, 255, 255, 0.3)",
+                            type: "patternLines",
+                            rotation: -45,
+                            lineWidth: 6,
+                            spacing: 10,
+                        },
+                    ]}
+                    fill={[
+                        {
+                            match: {
+                                id: "DITOLAK",
+                            },
+                            id: "dots",
+                        },
+                    ]}
                     legends={[
                         {
-                            anchor: "bottom",
-                            direction: "row",
+                            anchor: "bottom-left",
+                            direction: "column",
                             justify: false,
                             translateX: 0,
-                            translateY: (dimension.height * 10) / 100,
+                            translateY: (dimension.height * 5) / 100,
                             itemsSpacing: 10,
                             itemWidth:
-                                (dimension.width * 80) / 100 / data.length,
+                                (dimension.width * 80) / 100 / data?.length,
                             itemHeight: 18,
                             itemTextColor: "#999",
                             itemDirection: "left-to-right",
@@ -182,10 +133,7 @@ const App = ({ data, ...res }: PieProps): JSX.Element => {
     );
 };
 
-const Pie = memo(
-    App,
-    (prevProp, nextProp) => prevProp.data !== nextProp.datatype,
-);
+const Pie = memo(App, (prevProp, nextProp) => prevProp.data === nextProp.data);
 
 export default Pie;
 

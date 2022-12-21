@@ -6,3 +6,7 @@ node_modules
 .env
 .env.*
 !.env.example
+yarn-error.log
+
+# macos
+.DS_Store

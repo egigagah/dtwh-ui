@@ -13,7 +13,7 @@ const EmbedApp: CustomAppElement = () => {
 
     return (
         <Flex flex={1} justify="center" h="100%" w="100%" position="relative">
-            <Charts.Pie data={dataPie} />
+            <Charts.Pie data={dataPie} total={100} />
             <Box position="fixed" right={5} top={5}>
                 <ChartMenus />
             </Box>
