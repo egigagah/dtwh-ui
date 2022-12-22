@@ -25,7 +25,7 @@ const providers = [
             // Add logic here to look up the user from the credentials supplied
             try {
                 const token = await AuthClient.loginGql(credentials);
-
+                console.log(token);
                 if (token) {
                     // Any object returned will be saved in `user` property of the JWT
                     return token.login;
