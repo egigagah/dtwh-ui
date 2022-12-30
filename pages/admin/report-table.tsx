@@ -1,36 +1,76 @@
-import React, { useMemo } from "react";
-import { Badge, Flex, Heading, HStack, Stack } from "@chakra-ui/react";
+import React, { useMemo, useState } from "react";
+import {
+    Badge,
+    Divider,
+    Flex,
+    Heading,
+    HStack,
+    Stack,
+    Text,
+} from "@chakra-ui/react";
 import { GetStaticProps } from "next";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { CustomAppElement } from "src/utils/types";
-import { cacheName, getDatas } from "src/utils/query/dashboards";
+import { CustomAppElement, FilterDatasType } from "src/utils/types";
+import { cacheName, getDatas } from "src/utils/models/dashboards";
 import { useSession } from "next-auth/react";
 import { ColumnDef } from "@tanstack/react-table";
 import { ReportTable } from "src/gql/graphql";
 import {
     ReportFilterArgs,
+    ReportQueryParamArgs,
     ReportSearchDataArgs,
+    SortsArgs,
     useReportTable,
-} from "src/utils/query/report-table";
+} from "src/utils/models/report-table";
 import DataTable from "@components/datatable";
+import Disclaimer from "@components/disclaimer";
+import { FilterReportTable } from "@components/filters";
 
 const defaultData = {
     status: {
         value: "ALL",
         label: "ALL",
     },
-    tahun: [
+    level_wilayah: [
         {
-            value: -1,
+            value: "ALL",
             label: "ALL",
         },
     ],
+    service_point: [
+        {
+            value: "ALL",
+            label: "ALL",
+        },
+    ],
+    // tahun: [
+    //     {
+    //         value: -1,
+    //         label: "ALL",
+    //     },
+    // ],
+    // bidang: [
+    //     {
+    //         value: -1,
+    //         label: "ALL",
+    //     },
+    // ],
+    // kategori: [
+    //     {
+    //         value: -1,
+    //         label: "ALL",
+    //     },
+    // ],
+    // source_db: [
+    //     {
+    //         value: -1,
+    //         label: "ALL",
+    //     },
+    // ],
 };
-const params: ReportSearchDataArgs = {
-    bidang: "",
-    kategori: "",
-    level_wilayah: "",
+
+const searchParams: ReportSearchDataArgs = {
     nama_izin: "",
     nama_pemohon: "",
     nama_perusahaan: "",
@@ -39,15 +79,19 @@ const params: ReportSearchDataArgs = {
     nomor_permohonan: "",
     nomor_sk: "",
     npwp_perusahaan: "",
-    service_point: "",
-    source_db: "",
-    status: "",
-    tahun: "",
+};
+
+const filterParams: ReportFilterArgs = {
+    bidang: ["ALL"],
+    kategori: ["ALL"],
+    level_wilayah: ["ALL"],
+    service_point: ["ALL"],
+    source_db: ["ALL"],
+    status: "All",
+    tahun: [-1],
 };
 
 const App: CustomAppElement = () => {
-    const { data: session, status } = useSession();
-
     const columns = useMemo<ColumnDef<ReportTable>[]>(
         () => [
             {
@@ -146,9 +190,10 @@ const App: CustomAppElement = () => {
         ],
         [],
     );
+    const [datas, setDatas] = useState<FilterDatasType>(defaultData);
 
     return (
-        <Flex direction="column" h="full" px={[2, 8, 16]}>
+        <Flex direction="column" h="full" px={[2, 8]}>
             <HStack justifyContent="space-between">
                 <Stack
                     as={Flex}
@@ -160,13 +205,28 @@ const App: CustomAppElement = () => {
                     <Heading fontSize={["xl", "2xl", "3xl"]}>
                         Report Perizinan
                     </Heading>
+                    <Stack>
+                        <Text color="blackAlpha.500" mb={0}>
+                            Data perizinan dari seluruh sumber perizinan PTSP
+                            DKI JAKARTA
+                        </Text>
+                        <Disclaimer.Dashboard />
+                    </Stack>
                 </Stack>
             </HStack>
-            <Flex py={8}>
+            <Flex py={8} direction="column" bg="white" position="relative">
+                <FilterReportTable
+                    datas={datas}
+                    onSubmit={(d: FilterDatasType) => {
+                        setDatas(d);
+                    }}
+                />
+                <Divider />
                 <DataTable
                     columns={columns}
                     queryFn={useReportTable}
-                    searchParams={params}
+                    searchParams={searchParams}
+                    filterParams={datas}
                 />
             </Flex>
         </Flex>

@@ -106,6 +106,7 @@ export default function Header({
             boxSize="full"
             position="sticky"
             bg="white"
+            borderBottom="1px solid #F0F0F0"
         >
             <Box fontSize="xl">
                 {disclosure && disclosure.onClose && disclosure.onOpen && (

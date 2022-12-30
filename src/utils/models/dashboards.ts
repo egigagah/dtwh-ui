@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { MultiValue } from "react-select";
 import { GetDashboardsQuery } from "src/gql/graphql";
-import { dashboardQuery, filtersQuery, lineStatusCsvQuery } from "src/models";
+import { dashboardQuery, filtersQuery, lineStatusCsvQuery } from "src/query";
 import useGraphql from "../graphql";
 import { FilterDatasType, FilterValueType } from "../types";
 

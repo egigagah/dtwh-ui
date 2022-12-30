@@ -19,7 +19,7 @@ export default function AdminLayout({
         <Flex
             flex={1}
             flexDirection="column"
-            bg={["white", "gray.50"]}
+            bg={["white", "blackAlpha.50"]}
             h="100vh"
             overflow="hidden"
         >

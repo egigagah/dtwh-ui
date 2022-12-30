@@ -27,25 +27,25 @@ import { useForm } from "react-hook-form";
 import { getServerSideTranslations } from "src/utils/i18n/getServerSideTranslations";
 import * as yup from "yup";
 
-const loginSchema = yup
-    .object({
-        email: yup
-            .string()
-            .email("Email tidak valid")
-            .required("Email wajib diisi"),
-        password: yup
-            .string()
-            .min(3, "Password minimal 3 character")
-            .required("password wajib diisi"),
-    })
-    .required();
-
 export default function Login({ locale }: { locale: string }): JSX.Element {
+    const { t } = useTranslation("auth");
+    const { data, status } = useSession();
+    const loginSchema = yup
+        .object({
+            email: yup
+                .string()
+                .email(t("email-tidak-valid"))
+                .required(t("email-wajib-diisi")),
+            password: yup
+                .string()
+                .min(3, t("password-minimal-3-character"))
+                .required(t("password-wajib-diisi")),
+        })
+        .required();
     const router = useRouter();
     const targetUrl = (router.query?.callbackUrl as string) || "/admin";
     const defaultUrl = locale !== "id" ? `/${locale}${targetUrl}` : targetUrl;
     const callbackUrl = defaultUrl;
-    console.log(callbackUrl, locale);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState<string | undefined>(undefined);
     const { onClose, onOpen, isOpen } = useDisclosure({ defaultIsOpen: false });
@@ -54,12 +54,13 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
         register,
         formState: { errors, isValid, touchedFields },
     } = useForm({
-        defaultValues: { email: "user@app.com", password: "123456" },
+        defaultValues:
+            process.env.NODE_ENV === "production"
+                ? { email: "", password: "" }
+                : { email: "user@app.com", password: "123456" },
         resolver: yupResolver(loginSchema),
         mode: "onChange",
     });
-    const { t } = useTranslation();
-    const { data, status } = useSession();
 
     function submitForm(data: any) {
         setError(undefined);
@@ -71,7 +72,6 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
             callbackUrl: callbackUrl,
         })
             .then((res) => {
-                console.log(res, " -- login res");
                 if (res?.error) {
                     setError(res?.error);
                 }
@@ -109,7 +109,9 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
                         )}
                         <form onSubmit={handleSubmit(submitForm)}>
                             <Stack spacing={8} w="full">
-                                <Heading textDecor="underline">Login</Heading>
+                                <Heading textDecor="underline">
+                                    {t("login-form")}
+                                </Heading>
                                 <VStack spacing={4}>
                                     <FormControl
                                         isInvalid={
@@ -117,13 +119,13 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
                                             touchedFields.email
                                         }
                                     >
-                                        <FormLabel>Email</FormLabel>
+                                        <FormLabel>{t("email")}</FormLabel>
                                         <Input
                                             type="email"
                                             {...register("email")}
                                         />
                                         <FormErrorMessage>
-                                            {errors.email?.message}
+                                            {errors.email?.message as string}
                                         </FormErrorMessage>
                                     </FormControl>
                                     <FormControl
@@ -132,14 +134,13 @@ export default function Login({ locale }: { locale: string }): JSX.Element {
                                             touchedFields.password
                                         }
                                     >
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>{t("password")}</FormLabel>
                                         <Input
                                             type="password"
                                             {...register("password")}
                                         />
                                         <FormErrorMessage>
-                                            {errors.password?.message ||
-                                                "halloo"}
+                                            {errors.password?.message as string}
                                         </FormErrorMessage>
                                     </FormControl>
                                 </VStack>

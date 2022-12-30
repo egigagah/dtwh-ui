@@ -13,7 +13,7 @@ export default function Layout({
         <Flex
             flex={1}
             flexDirection="column"
-            bg={["gray.50", "gray.50"]}
+            bg={["blackAlpha.50", "blackAlpha.50"]}
             minH="100vh"
         >
             {withHeader && (
@@ -25,7 +25,6 @@ export default function Layout({
                 flex={1}
                 justifyContent={["flex-start", "center"]}
                 spacing={4}
-                px={[4, 0]}
             >
                 {children}
             </Stack>

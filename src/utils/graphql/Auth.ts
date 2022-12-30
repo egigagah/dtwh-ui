@@ -1,4 +1,4 @@
-import { loginUserModel } from "src/models";
+import { loginUserModel } from "src/query";
 import useGraphql from ".";
 // import {
 //     APIErrorResponseType,

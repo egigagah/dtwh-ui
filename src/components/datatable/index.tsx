@@ -18,15 +18,25 @@ import {
     ColumnFiltersState,
 } from "@tanstack/react-table";
 import Pagination from "./Pagination";
-import { ReportFilterArgs, useReportTable } from "src/utils/query/report-table";
+import {
+    ReportFilterArgs,
+    ReportQueryParamArgs,
+    ReportSearchDataArgs,
+    SortsArgs,
+    useReportTable,
+} from "src/utils/models/report-table";
 import { UseQueryResult } from "@tanstack/react-query";
 import Body from "./Body";
 import Head from "./Head";
+import { ReportDataTableDocument } from "src/gql/graphql";
 
 export type DataTableProps = {
     queryFn: (d: any) => UseQueryResult<any, any>;
     columns: ColumnDef<any, any>[];
-    searchParams: {
+    searchParams?: {
+        [Key: string]: any;
+    };
+    filterParams?: {
         [Key: string]: any;
     };
 };
@@ -35,6 +45,7 @@ export default function DataTable({
     queryFn,
     columns,
     searchParams,
+    filterParams,
 }: DataTableProps) {
     // const rerender = useReducer(() => ({}), {})[1];
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -43,12 +54,25 @@ export default function DataTable({
         pageIndex: 0,
         pageSize: 10,
     });
-    const params = useMemo<ReportFilterArgs>(() => {
-        const paramsKey = Object.keys(searchParams);
-        paramsKey.map((item) => {
-            searchParams[item] =
-                columnFilters.find((d) => d.id === item)?.value ?? "";
-        });
+    const params = useMemo<ReportQueryParamArgs>(() => {
+        if (searchParams) {
+            const searchKey = Object.keys(
+                searchParams as Array<keyof ReportSearchDataArgs>,
+            );
+            searchKey.map((item) => {
+                searchParams[item] =
+                    columnFilters.find((d) => d.id === item)?.value ?? "";
+            });
+        }
+        // if (filterParams) {
+        //     const filterKey = Object.keys(
+        //         filterParams as Array<keyof ReportSearchDataArgs>,
+        //     );
+        //     filterKey.map((item) => {
+        //         filterParams[item] =
+        //             columnFilters.find((d) => d.id === item)?.value ?? "";
+        //     });
+        // }
         const sortParams = sorting.map((item) => {
             const obj = {
                 sortField: item.id,
@@ -57,13 +81,15 @@ export default function DataTable({
             return obj;
         });
 
+        console.log(filterParams, "filterParams");
         return {
             limit: pagination.pageSize,
             page: pagination.pageIndex + 1,
             ...searchParams,
+            ...filterParams,
             ...sortParams[0],
         };
-    }, [sorting, pagination, columnFilters]);
+    }, [sorting, pagination, columnFilters, filterParams]);
 
     // const [dataTable, setData] = useState(() => []);
     const { data, isLoading, isError } = useReportTable(params);
@@ -119,7 +145,7 @@ export default function DataTable({
                         <Box px={8}>
                             <Flex
                                 h="40"
-                                bg="gray.50"
+                                bg="blackAlpha.50"
                                 justifyContent="center"
                                 alignItems="center"
                                 rounded="lg"

@@ -14,12 +14,15 @@ import {
     ModalBody,
     ModalFooter,
     Code,
+    Text,
+    Stack,
 } from "@chakra-ui/react";
 import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import ChartMenus from "./Menus";
 
 interface CardsProps extends BoxProps {
     title: string;
+    subTitle?: string;
     fileName?: string;
     dataCollection?: any[];
     bodyH?: number | string;
@@ -27,6 +30,7 @@ interface CardsProps extends BoxProps {
 
 export const Cards = ({
     title,
+    subTitle,
     children,
     dataCollection,
     fileName,
@@ -41,7 +45,7 @@ export const Cards = ({
             {...res}
             data-testid="card-container"
             shadow={res?.shadow || "xl"}
-            h={res.h || res?.height || "28rem"}
+            h={res.h || res?.height || "32rem"}
             borderRadius={res.borderRadius || "lg"}
             overflow={res?.overflow || "clip"}
             borderWidth={res?.borderWidth || "1px"}
@@ -49,16 +53,15 @@ export const Cards = ({
             borderColor={res?.borderColor || "gray.200"}
             bg="white"
         >
-            <HStack
-                justifyContent="space-between"
-                py={3}
-                pl={4}
-                pr={2}
-                bg="white"
-            >
-                <Heading fontSize={["md", "lg"]} fontWeight="500">
-                    {title}
-                </Heading>
+            <HStack justifyContent="space-between" bg="white" p={[4, 6]}>
+                <Stack>
+                    <Heading fontSize={["md", "lg"]} fontWeight="500">
+                        {title}
+                    </Heading>
+                    <Text fontWeight="light" color="blackAlpha.600">
+                        {subTitle}
+                    </Text>
+                </Stack>
                 <ChartMenus
                     setModalEmbedShow={() => setModalEmbedShow(!modalEmbedShow)}
                     dataCollections={dataCollection}
@@ -67,7 +70,7 @@ export const Cards = ({
             </HStack>
             <Divider />
             <FullScreen handle={isFullScreen} className="fullscreen-el">
-                <Flex flex={1} h={bodyH || "80%"}>
+                <Flex flex={1} h={bodyH || "70%"} overflow="scroll">
                     {children}
                 </Flex>
             </FullScreen>

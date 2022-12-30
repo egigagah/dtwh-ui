@@ -32,4 +32,9 @@ export type FilterValueType = {
 export type FilterDatasType = {
     tahun?: MultiValue<FilterValueType>;
     status?: SingleValue<FilterValueType>;
+    service_point?: MultiValue<FilterValueType>;
+    source_db?: MultiValue<FilterValueType>;
+    level_wilayah?: MultiValue<FilterValueType>;
+    bidang?: MultiValue<FilterValueType>;
+    kategori?: MultiValue<FilterValueType>;
 };

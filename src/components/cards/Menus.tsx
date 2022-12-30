@@ -77,7 +77,7 @@ const MenuCsv = forwardRef<MenuCsvProps, any>((props, ref) => {
             >
                 Download CSV
             </CSVLink>
-            {/* {props.command && <span color="gray.500">{props.command}</span>} */}
+            {/* {props.command && <span color="blackAlpha.500">{props.command}</span>} */}
         </HStack>
     );
 });

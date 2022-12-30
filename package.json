@@ -1,6 +1,8 @@
 {
-  "name": "ptsp-dtwh-ui",
-  "version": "0.1.0",
+  "name": "dwp-ui",
+  "version": "0.0.1",
+  "description": "UI Datawarehouse PTSP",
+  "author": "Egi Gagah Brilliant",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,7 +13,8 @@
     "lint": "eslint '**/*.{js,jsx,ts,tsx}'",
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx}'",
     "test": "jest -c test/jest.config.js",
-    "codegen": "graphql-codegen --config codegen.ts"
+    "codegen": "graphql-codegen --config codegen.ts",
+    "pm2": "pm2 start yarn --name dwp-ui -- start"
   },
   "dependencies": {
     "@apollo/client": "^3.7.0",

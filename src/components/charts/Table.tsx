@@ -20,19 +20,34 @@ function App({ data, isLoading }: { data: any[]; isLoading: boolean }) {
             overflowY="scroll"
             pb={2.5}
             position="relative"
+            overflowX="scroll"
+            px={2}
         >
-            <Table variant="simple" position="relative" overflowY="scroll">
-                <Thead bg="gray.100" position="sticky" top={0} zIndex="2">
+            <Table
+                width="full"
+                variant="unstyled"
+                position="relative"
+                overflow="scroll"
+                overflowX="scroll"
+                size="sm"
+            >
+                <Thead
+                    bg="white"
+                    position="sticky"
+                    top={0}
+                    zIndex="2"
+                    overflowY="scroll"
+                >
                     <Tr>
-                        <Th fontSize="sm" w="80%">
+                        <Th fontSize="sm" w="80%" py={4}>
                             Bidang
                         </Th>
-                        <Th fontSize="sm" w="20%" textAlign="center">
+                        <Th fontSize="sm" w="20%" textAlign="center" py={4}>
                             Total
                         </Th>
                     </Tr>
                 </Thead>
-                <Tbody overflowY="scroll">
+                <Tbody overflow="scroll">
                     {!isLoading &&
                         data &&
                         data.length > 0 &&

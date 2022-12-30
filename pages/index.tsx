@@ -48,7 +48,7 @@ const App: CustomAppElement = () => {
                     <Text
                         fontSize={"2xl"}
                         m={0}
-                        color="gray.500"
+                        color="blackAlpha.500"
                         // fontWeight="800"
                         lineHeight="none"
                         // letterSpacing="-.06em"
@@ -112,7 +112,11 @@ const App: CustomAppElement = () => {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
     return {
         props: {
-            ...(await getServerSideTranslations(locale as string, ["common"])),
+            ...(await getServerSideTranslations(locale as string, [
+                "common",
+                "auth",
+                "login",
+            ])),
         },
     };
 };

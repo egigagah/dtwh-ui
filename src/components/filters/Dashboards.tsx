@@ -20,7 +20,7 @@ import {
 import { FaFilter } from "react-icons/fa";
 import ReactSelect from "react-select";
 import { FilterDatasType } from "src/utils/types";
-import { useFilterDashboard } from "src/utils/query/dashboards";
+import { useFilterDashboard } from "src/utils/models/dashboards";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -71,19 +71,6 @@ export default function FilterModal({
 
     const { data, isLoading, error } = useFilterDashboard();
 
-    useEffect(() => {
-        if (data) {
-            data?.getFiltersDashboard?.tahun?.unshift({
-                value: -1,
-                label: "ALL",
-            });
-            data?.getFiltersDashboard?.status?.unshift({
-                value: "ALL",
-                label: "ALL",
-            });
-        }
-    }, [data]);
-
     function submitForm(data: FilterDatasType) {
         onSubmit(data);
         closeModal(false);
@@ -107,6 +94,7 @@ export default function FilterModal({
                         variant="outline"
                         onClick={onOpen}
                         color="gray"
+                        size={["sm", "md"]}
                     >
                         Filter Data
                     </Button>
@@ -174,9 +162,9 @@ export default function FilterModal({
                                 variant="ghost"
                                 colorScheme="gray"
                                 mr={3}
-                                onClick={() => closeModal()}
+                                onClick={() => reset()}
                             >
-                                Close
+                                Reset Filter
                             </Button>
                             <Button
                                 colorScheme="blue"

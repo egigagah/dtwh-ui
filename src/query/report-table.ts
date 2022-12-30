@@ -1,13 +1,52 @@
 import { gql } from "graphql-request";
 
+export const AllFiltersReportTable = gql`
+    {
+        getAllFilters {
+            tahun {
+                value: id_tahun
+                label: tahun
+            }
+            status {
+                value: id_status
+                label: status
+            }
+            bidang {
+                value: id_bidang
+                label: bidang
+            }
+            bulan {
+                value: id_bulan
+                label: bulan
+            }
+            kategori {
+                value: id_kategori
+                label: kategori
+            }
+            servicePoint {
+                value: id_wilayah
+                label: service_point
+            }
+            source {
+                value: id_source
+                label: source_db
+            }
+            wilayah {
+                value: id_levelwilayah
+                label: level_wilayah
+            }
+        }
+    }
+`;
+
 export const ReportTableQuery = gql`
     query reportDataTable(
         $page: Int!
         $limit: Int!
         $nama_perusahaan: String
-        $bidang: String
-        $kategori: String
-        $level_wilayah: String
+        $bidang: [String!]
+        $kategori: [String!]
+        $level_wilayah: [String!]
         $nama_izin: String
         $nama_pemohon: String
         $nama_usaha: String
@@ -15,10 +54,10 @@ export const ReportTableQuery = gql`
         $nomor_permohonan: String
         $nomor_sk: String
         $npwp_perusahaan: String
-        $service_point: String
-        $source_db: String
+        $service_point: [String!]
+        $source_db: [String!]
         $status: String
-        $tahun: String
+        $tahun: [Int!]
         $sortField: String
         $sortType: String
     ) {
