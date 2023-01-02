@@ -22,17 +22,21 @@ import { useRouter } from "next/router";
 import { ReactNode, Ref, useRef } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import Language from "./Language";
+import { ItemLink } from "./Sidebar";
+import { IoBarChart, IoHome } from "react-icons/io5";
 
 export default function Header({
     children,
     icon,
     btnMenuRef,
     disclosure,
+    subMenu = false,
 }: {
     disclosure?: UseDisclosureProps;
     btnMenuRef?: Ref<any>;
     children: ReactNode;
     icon?: ReactNode | string;
+    subMenu?: boolean;
 }): JSX.Element {
     const { t } = useTranslation();
     const route = useRouter();
@@ -97,38 +101,74 @@ export default function Header({
     return (
         <Flex
             flex={0}
-            as="nav"
-            align="center"
             pos="relative"
-            justify="space-between"
-            py={4}
-            px={[6, 16]}
             boxSize="full"
+            px={[6, 8]}
             position="sticky"
+            top={-16}
             bg="white"
             borderBottom="1px solid #F0F0F0"
+            direction="column"
+            pt={4}
+            pb={subMenu ? 0 : 4}
+            gap={2}
         >
-            <Box fontSize="xl">
-                {disclosure && disclosure.onClose && disclosure.onOpen && (
-                    <IconButton
-                        aria-label="sidebar-menu"
-                        icon={<RiMenu3Line />}
-                        onClick={handleMenuBtn}
-                        ref={btnMenuRef}
-                        variant="ghost"
-                        mr={4}
+            <Flex
+                align="center"
+                justify="space-between"
+                px={subMenu ? [2, 4] : 2}
+            >
+                <Box fontSize="xl">
+                    {!subMenu &&
+                        disclosure &&
+                        disclosure.onClose &&
+                        disclosure.onOpen && (
+                            <IconButton
+                                aria-label="sidebar-menu"
+                                icon={<RiMenu3Line />}
+                                onClick={handleMenuBtn}
+                                ref={btnMenuRef}
+                                variant="ghost"
+                                mr={4}
+                            />
+                        )}
+                    <NextLink href={session ? "/admin" : "/"}>
+                        {icon || t("logo-here")}
+                    </NextLink>
+                </Box>
+                <HStack spacing={4} display={["none", "flex"]}>
+                    <Menus />
+                </HStack>
+                <MobileMenus display={["flex", "none"]}>
+                    <Menus />
+                </MobileMenus>
+            </Flex>
+
+            {subMenu && (
+                <HStack
+                    as="nav"
+                    bg="white"
+                    w="full"
+                    minH="10"
+                    h="max-content"
+                    alignItems="flex-end"
+                >
+                    <ItemLink
+                        href="/admin"
+                        text="Home"
+                        IconLink={IoHome}
+                        isOpen={disclosure?.isOpen}
+                        direction="vertical"
                     />
-                )}
-                <NextLink href={session ? "/admin" : "/"}>
-                    {icon || t("logo-here")}
-                </NextLink>
-            </Box>
-            <HStack spacing={4} display={["none", "flex"]}>
-                <Menus />
-            </HStack>
-            <MobileMenus display={["flex", "none"]}>
-                <Menus />
-            </MobileMenus>
+                    <ItemLink
+                        href="/admin/report-table"
+                        text="Report"
+                        IconLink={IoBarChart}
+                        isOpen={disclosure?.isOpen}
+                        direction="vertical"
+                    />
+                </HStack>
+            )}
         </Flex>
     );
 }

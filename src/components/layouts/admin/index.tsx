@@ -5,7 +5,6 @@ import { useRef } from "react";
 import { LayoutsProps } from "src/utils/types";
 import Footer from "../Footer";
 import Header from "../Header";
-import Sidebar from "../Sidebar";
 
 export default function AdminLayout({
     children,
@@ -24,7 +23,11 @@ export default function AdminLayout({
             overflow="hidden"
         >
             {withHeader && (
-                <Header btnMenuRef={btnMenuRef} disclosure={disclosure}>
+                <Header
+                    btnMenuRef={btnMenuRef}
+                    disclosure={disclosure}
+                    subMenu={true}
+                >
                     <NextLink href="/dashboard">{t("Dashboard")}</NextLink>
                 </Header>
             )}
@@ -35,7 +38,7 @@ export default function AdminLayout({
                 h="full"
                 overflow="hidden"
             >
-                <Sidebar disclosure={disclosure} />
+                {/* <Sidebar disclosure={disclosure} /> */}
                 <Stack
                     flex={1}
                     justifyContent={["flex-start", "center"]}

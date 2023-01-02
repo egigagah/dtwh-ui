@@ -3,12 +3,11 @@ import {
     Center,
     Flex,
     Table,
-    TableCaption,
     TableContainer,
     Text,
-    Tfoot,
+    useDisclosure,
 } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
     ColumnDef,
     getCoreRowModel,
@@ -19,16 +18,14 @@ import {
 } from "@tanstack/react-table";
 import Pagination from "./Pagination";
 import {
-    ReportFilterArgs,
     ReportQueryParamArgs,
     ReportSearchDataArgs,
-    SortsArgs,
     useReportTable,
 } from "src/utils/models/report-table";
 import { UseQueryResult } from "@tanstack/react-query";
 import Body from "./Body";
 import Head from "./Head";
-import { ReportDataTableDocument } from "src/gql/graphql";
+import PopupDetail from "./Popup";
 
 export type DataTableProps = {
     queryFn: (d: any) => UseQueryResult<any, any>;
@@ -39,6 +36,7 @@ export type DataTableProps = {
     filterParams?: {
         [Key: string]: any;
     };
+    size?: "sm" | "md" | "lg";
 };
 
 export default function DataTable({
@@ -46,6 +44,7 @@ export default function DataTable({
     columns,
     searchParams,
     filterParams,
+    size = "sm",
 }: DataTableProps) {
     // const rerender = useReducer(() => ({}), {})[1];
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -54,6 +53,8 @@ export default function DataTable({
         pageIndex: 0,
         pageSize: 10,
     });
+    const [selected, setSelected] = useState(undefined);
+    const disclosure = useDisclosure();
     const params = useMemo<ReportQueryParamArgs>(() => {
         if (searchParams) {
             const searchKey = Object.keys(
@@ -64,15 +65,6 @@ export default function DataTable({
                     columnFilters.find((d) => d.id === item)?.value ?? "";
             });
         }
-        // if (filterParams) {
-        //     const filterKey = Object.keys(
-        //         filterParams as Array<keyof ReportSearchDataArgs>,
-        //     );
-        //     filterKey.map((item) => {
-        //         filterParams[item] =
-        //             columnFilters.find((d) => d.id === item)?.value ?? "";
-        //     });
-        // }
         const sortParams = sorting.map((item) => {
             const obj = {
                 sortField: item.id,
@@ -81,7 +73,6 @@ export default function DataTable({
             return obj;
         });
 
-        console.log(filterParams, "filterParams");
         return {
             limit: pagination.pageSize,
             page: pagination.pageIndex + 1,
@@ -93,10 +84,6 @@ export default function DataTable({
 
     // const [dataTable, setData] = useState(() => []);
     const { data, isLoading, isError } = useReportTable(params);
-
-    useEffect(() => {
-        console.log(isLoading, "isLoading");
-    }, [isLoading]);
 
     const table = useReactTable({
         data: data?.items || [],
@@ -117,6 +104,11 @@ export default function DataTable({
         debugTable: true,
     });
 
+    function onSelect(data: any) {
+        setSelected(data);
+        disclosure.onOpen();
+    }
+
     return (
         <Flex
             direction="column"
@@ -131,13 +123,14 @@ export default function DataTable({
             {data && !isError && (
                 <>
                     <TableContainer w="full">
-                        <Table variant="simple" width="full">
+                        <Table variant="simple" width="full" size={size}>
                             <Head table={table} isLoading={isLoading} />
                             <Body
                                 table={table}
                                 isLoading={isLoading}
                                 rowsLength={pagination.pageSize}
                                 isEmpty={data?.items.length < 1}
+                                onSelect={onSelect}
                             />
                         </Table>
                     </TableContainer>
@@ -157,6 +150,7 @@ export default function DataTable({
                     <Pagination table={table} />
                 </>
             )}
+            <PopupDetail disclosure={disclosure} data={selected} />
             {isError && (
                 <Center pt={8}>
                     There is something wrong. failed to get Data

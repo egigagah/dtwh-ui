@@ -1,4 +1,4 @@
-import { Box, Center, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import { Box, Tbody, Td, Tr } from "@chakra-ui/react";
 import Skeletons from "@components/skeletons";
 import { flexRender, Table } from "@tanstack/react-table";
 
@@ -7,18 +7,14 @@ export default function Body({
     isLoading,
     rowsLength = 10,
     isEmpty,
+    onSelect,
 }: {
     table: Table<any>;
     isLoading: boolean;
     rowsLength: number;
     isEmpty: boolean;
+    onSelect: (d: any) => void;
 }) {
-    console.log(
-        isLoading,
-        table.getRowModel().rows.length,
-        table.getAllColumns().length,
-        "body table",
-    );
     return (
         <Tbody>
             {isLoading && (
@@ -31,7 +27,14 @@ export default function Body({
                 !isEmpty &&
                 table.getRowModel().rows.map((row) => {
                     return (
-                        <Tr key={row.id}>
+                        <Tr
+                            key={row.id}
+                            _hover={{
+                                cursor: "pointer",
+                                background: "#FAFAFA",
+                            }}
+                            onClick={() => onSelect(row.original)}
+                        >
                             {row.getVisibleCells().map((cell) => {
                                 return (
                                     <Td

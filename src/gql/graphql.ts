@@ -397,6 +397,39 @@ export type ReportTable = {
   zonasi: Scalars['String'];
 };
 
+export type ReportTableMongo = {
+  __typename?: 'ReportTableMongo';
+  alamat_izin: Scalars['String'];
+  alamat_pemohon: Scalars['String'];
+  alamat_perusahaan: Scalars['String'];
+  bidang: Scalars['String'];
+  bulan: Scalars['String'];
+  data_teknis?: Maybe<Scalars['JSON']>;
+  id: Scalars['Int'];
+  kategori: Scalars['String'];
+  kode_wilayah_izin: Scalars['String'];
+  koordinat_izin: Scalars['String'];
+  level_wilayah: Scalars['String'];
+  nama_izin: Scalars['String'];
+  nama_pemohon: Scalars['String'];
+  nama_perusahaan: Scalars['String'];
+  nama_usaha: Scalars['String'];
+  no_identitas_pemohon: Scalars['String'];
+  nomor_permohonan: Scalars['String'];
+  nomor_sk: Scalars['String'];
+  npwp_perusahaan: Scalars['String'];
+  service_point: Scalars['String'];
+  source_db: Scalars['String'];
+  status: Scalars['String'];
+  tahun: Scalars['String'];
+  tgl_akhir_berlaku: Scalars['String'];
+  tgl_pengajuan?: Maybe<Scalars['Timestamp']>;
+  tgl_terbit_izin: Scalars['DateTime'];
+  tipe_pengajuan: Scalars['String'];
+  tipe_perizinan: Scalars['String'];
+  zonasi: Scalars['String'];
+};
+
 export type ReportTablePagination = {
   __typename?: 'ReportTablePagination';
   items: Array<ReportTable>;

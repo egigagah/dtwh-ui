@@ -97,12 +97,12 @@ const App: CustomAppElement = () => {
             {
                 header: "Nama Usaha",
                 accessorKey: "nama_usaha",
-                size: 96,
+                size: 80,
             },
             {
                 header: "Perusahaan",
                 accessorKey: "nama_perusahaan",
-                size: 96,
+                size: 80,
             },
             {
                 header: "Npwp",
@@ -111,7 +111,7 @@ const App: CustomAppElement = () => {
             {
                 header: "Izin",
                 accessorKey: "nama_izin",
-                size: 96,
+                size: 80,
             },
             {
                 header: "Tanggal",
@@ -156,14 +156,18 @@ const App: CustomAppElement = () => {
             {
                 header: "Kategori",
                 accessorKey: "kategori",
+                enableColumnFilter: false,
+                size: 80,
             },
             {
                 header: "Level",
                 accessorKey: "level_wilayah",
+                enableColumnFilter: false,
             },
             {
                 header: "Service Point",
                 accessorKey: "service_point",
+                enableColumnFilter: false,
                 size: 64,
             },
             {

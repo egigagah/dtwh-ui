@@ -10,6 +10,7 @@ import {
     UseDisclosureProps,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { IconType } from "react-icons";
 import { IoBarChart, IoHome } from "react-icons/io5";
 
@@ -27,18 +28,11 @@ export default function Sidebar({
             bg="white"
             py={2}
             overflow="scroll"
-            // spacing={2}
         >
             <ItemLink
                 href="/admin"
                 text="Home"
                 IconLink={IoHome}
-                isOpen={disclosure.isOpen}
-            />
-            <ItemLink
-                href="/admin/test"
-                text="Test"
-                IconLink={IoBarChart}
                 isOpen={disclosure.isOpen}
             />
             <ItemLink
@@ -51,38 +45,57 @@ export default function Sidebar({
     );
 }
 
-function ItemLink({
+export function ItemLink({
     href,
     text,
     IconLink,
     isOpen = false,
+    direction = "horizontal",
 }: {
     isOpen?: boolean;
     href: string;
     text: string;
     IconLink: IconType;
+    direction?: "horizontal" | "vertical";
 }) {
+    const router = useRouter();
+    const border =
+        direction === "horizontal"
+            ? { borderRight: "2.5px solid black" }
+            : { borderBottom: "2.5px solid black" };
     return (
         <Tooltip
             label={text}
             placement="right"
             hasArrow
             fontSize="sm"
-            isDisabled={isOpen}
+            isDisabled={isOpen || direction === "vertical"}
         >
             <LinkBox
                 h="10"
                 as={Flex}
                 alignItems="center"
-                _hover={{ background: "#C5E4F3", color: "#015884" }}
-                _active={{ background: "#C5E4F3", color: "#015884" }}
-                _activeLink={{ background: "#C5E4F3", color: "#015884" }}
+                bg="white"
+                color="#808080"
+                _hover={{ background: "#F5F5F5", color: "black" }}
+                style={
+                    router.pathname === href
+                        ? {
+                              color: "black",
+                              ...border,
+                          }
+                        : {}
+                }
             >
                 <NextLink href={href} passHref>
                     <LinkOverlay>
                         <HStack h="10" alignItems="center" px={4} spacing={4}>
-                            <IconLink size={18} />
-                            {isOpen && <Text>{text}</Text>}
+                            {direction === "horizontal" && (
+                                <IconLink size={18} />
+                            )}
+                            {(isOpen || direction === "vertical") && (
+                                <Text mb="0">{text}</Text>
+                            )}
                         </HStack>
                     </LinkOverlay>
                 </NextLink>

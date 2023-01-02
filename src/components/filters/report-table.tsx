@@ -10,6 +10,7 @@ import {
     FormControl,
     FormErrorMessage,
     FormLabel,
+    HStack,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -18,6 +19,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Stack,
+    Tag,
     Text,
     Tooltip,
     useDisclosure,
@@ -30,6 +32,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useFilterReportTable } from "src/utils/models/report-table";
+import FilterTagResult from "./FilterTagResult";
 
 const filterSchema = yup
     .object({
@@ -145,7 +148,7 @@ export default function FilterReportTable({
     const {
         handleSubmit,
         control,
-        formState: { errors, isValid, isDirty },
+        formState: { errors, isValid, isDirty, defaultValues },
         reset,
     } = useForm({
         defaultValues: datas,
@@ -157,17 +160,13 @@ export default function FilterReportTable({
 
     function submitForm(data: FilterDatasType) {
         onSubmit(data);
-        // closeModal(false);
+        onClose();
     }
 
-    // function closeModal(isReset = true) {
-    //     if (isReset)
-    //         reset({
-    //             tahun: datas.tahun,
-    //             status: datas.status,
-    //         });
-    //     onClose();
-    // }
+    function resetForm() {
+        reset();
+        onSubmit(defaultValues as FilterDatasType);
+    }
 
     return (
         <Flex
@@ -183,10 +182,33 @@ export default function FilterReportTable({
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"
+                gap={4}
+                pb={isOpen ? 4 : 0}
             >
-                <Text mb={0}>
-                    Filter data yang ingin anda tampilkan di dashboard
-                </Text>
+                <Stack direction="column" wrap="wrap">
+                    <Text
+                        mb={0}
+                        color="blackAlpha.500"
+                        fontWeight="medium"
+                        fontSize={"lg"}
+                    >
+                        Filter data yang anda tampilkan saat ini:
+                    </Text>
+                    <Stack direction={["column", "row"]} gap={4}>
+                        <FilterTagResult
+                            label="Status"
+                            value={datas?.status?.label || "ALL"}
+                        />
+                        <FilterTagResult
+                            label="Level Wilayah"
+                            value={(datas?.level_wilayah as any[]) || "ALL"}
+                        />
+                        <FilterTagResult
+                            label="Service Point"
+                            value={(datas?.service_point as any[]) || "ALL"}
+                        />
+                    </Stack>
+                </Stack>
                 <Tooltip label="Filter Data">
                     <Box>
                         <Button
@@ -207,16 +229,29 @@ export default function FilterReportTable({
                     w="full"
                     flex={1}
                     px={[2, 4, 8]}
-                    pt={[2, 4, 8]}
+                    py={[2, 4, 8]}
+                    bg="blackAlpha.50"
                 >
                     <form
                         onSubmit={handleSubmit(submitForm)}
                         style={{ width: "100%" }}
                     >
-                        <Flex w="full" flex={1} direction="column" gap={4}>
-                            <Stack spacing={4} w="full" direction="row">
+                        <Flex
+                            w="full"
+                            flex={1}
+                            direction="column"
+                            gap={[4, 6, 8]}
+                            // borderTop="1px solid gray"
+                        >
+                            <Stack
+                                spacing={4}
+                                w="full"
+                                direction="row"
+                                // flexWrap="wrap"
+                            >
                                 <FormControl
-                                    w={["full", "sm"]}
+                                    w={["full", "xs"]}
+                                    minW={"xs"}
                                     isInvalid={!!errors.status}
                                 >
                                     <FormLabel>Status</FormLabel>
@@ -235,7 +270,10 @@ export default function FilterReportTable({
                                         {errors?.status?.message}
                                     </FormErrorMessage>
                                 </FormControl>
-                                <FormControl isInvalid={!!errors.level_wilayah}>
+                                <FormControl
+                                    w={["full", "sm"]}
+                                    isInvalid={!!errors.level_wilayah}
+                                >
                                     <FormLabel>Level Wilayah</FormLabel>
                                     <Controller
                                         name="level_wilayah"
@@ -253,7 +291,10 @@ export default function FilterReportTable({
                                         {errors?.level_wilayah?.message}
                                     </FormErrorMessage>
                                 </FormControl>
-                                <FormControl isInvalid={!!errors.service_point}>
+                                <FormControl
+                                    w={["full", "sm"]}
+                                    isInvalid={!!errors.service_point}
+                                >
                                     <FormLabel>Service Point</FormLabel>
                                     <Controller
                                         name="service_point"
@@ -274,16 +315,17 @@ export default function FilterReportTable({
                             </Stack>
                             <Flex direction="row" justifyContent="flex-end">
                                 <Button
-                                    variant="ghost"
-                                    colorScheme="gray"
+                                    variant="outline"
+                                    colorScheme="blackAlpha"
                                     mr={3}
-                                    onClick={() => reset()}
+                                    onClick={resetForm}
                                     disabled={!isDirty}
                                 >
                                     Reset Filter
                                 </Button>
                                 <Button
-                                    colorScheme="blue"
+                                    variant="outline"
+                                    colorScheme="telegram"
                                     type="submit"
                                     disabled={!isValid}
                                 >
