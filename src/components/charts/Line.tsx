@@ -35,7 +35,7 @@ const App = ({ data, isLoading }: LineChartProps): JSX.Element => {
                         legend: "Bulan",
                         legendOffset: 36,
                         legendPosition: "middle",
-                        format: (d) => `${d.toString().slice(0, 3)}`,
+                        format: (d) => `${d?.toString().slice(0, 3)}`,
                     }}
                     axisLeft={{
                         tickSize: 5,
